@@ -1,1 +1,1 @@
-{"name":"t-red-world","version":"0.1.0","type":"module","scripts":{"dev":"vite --host 0.0.0.0","build":"tsc && vite build","test":"node --test tests/*.test.js"},"devDependencies":{"vite":"^6.3.0","typescript":"^5.8.3","@playwright/test":"^1.51.0"}}
+{"name":"t-red-world","version":"0.1.0","type":"module","scripts":{"dev":"vite --host 0.0.0.0","build":"tsc && vite build","test":"node --test tests/*.test.js"},"devDependencies":{"@playwright/test":"^1.51.0","@types/node":"24.19.2","typescript":"^5.8.3","vite":"^6.3.0"},"dependencies":{"@supabase/supabase-js":"2.118.0"}}

@@ -2,7 +2,14 @@
 Playable office MVP, Vietnamese, mobile-first. Original procedural pixel art; reference images are not used as a background.
 
 ## Run
-Node 24: `npm ci`, `npm run dev`. Production: `npm run build`; serve `dist` on a static host such as Vercel. No deployment has been performed.
+Node 24: `npm ci`, copy `.env.example` to `.env.local` and fill in the Supabase publishable key, then `npm run dev`. Production: `npm run build`.
+
+## Connected services
+- GitHub: `TRED-Media/tredworld`, production branch `main`.
+- Vercel: `tredworld`, current domain `https://tredworld.vercel.app`.
+- Supabase: `TRedWorld` (`peqaklqbgjhpozdukpxu`). Shared browser client: `src/supabase.ts`.
+- Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in Vercel for each environment. Local values belong in ignored `.env.local`.
+- This connects the SDK and configuration. Authentication, database-backed game saves and internet multiplayer still need implementation; existing demo behavior remains local.
 
 WASD/arrows to walk, E near a desk to inspect. On mobile drag inside the map to walk; release to stop. Tap a desk to inspect it. Parking is south of reception. The −/+ button switches zoom. The map button lists rooms.
 
