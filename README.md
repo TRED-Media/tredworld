@@ -10,3 +10,5 @@ Demo characters, XP, RC and inventory are sample data. Quest marks and demo chec
 
 ## Checks
 `npm test` and `npm run build`. See TESTING.md for verification limits.
+
+Map button now shows room positions and the player marker. Settings offer local work status, zoom and return to reception. Two-finger pinch changes zoom. Manifest and service worker provide a basic offline shell after an online visit; installability depends on browser support and has not been verified.
