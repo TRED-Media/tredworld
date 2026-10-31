@@ -34,3 +34,11 @@ This is generated reference-based artwork; visual identity is close to the suppl
 - Riding requires an owned, equipped vehicle. Parking is offered in the parking area, and the server rejects work check-in while riding. Purchased clothing uses the owned artwork; equipped pets accompany walking characters.
 - Wide viewports use a uniform camera zoom minimum rather than stretching the scene or leaving the world uncovered on the right. Verified a 2560x1440 capture.
 - Browser verification includes actual keyboard movement to the assigned chair, clicking it, image submission and entering Working state, in addition to ownership, wardrobe, restored collections, proportional rendering and responsive screens. Physical device cameras are not claimed tested.
+
+## Live setup and wardrobe follow-up
+- Replaced the environment with a version containing no baked personal desks or premium workstation equipment. Shared office and setup preview use one equipment-driven workstation renderer. Only owned, equipped items appear.
+- Starter accounts receive a basic desk, chair, case and monitor, with no cooling or decor. Existing purchases are preserved. The director receives a one-time audited setup budget; admin/admin is a dedicated Founder test account with server-enforced zero-cost purchases.
+- Setup has PC & Setup (case/monitor/cooling/accessories), furniture (desk/chair/desk accessories), and decoration (plants/pictures/shelves/lights & rugs). Purchase applies workstation upgrades and emits the existing live update to other players.
+- Clothing uses a cached character-pixel material pass and fitted headwear/eyewear rather than inventory icons pasted on the body; portrait and world share the same composition.
+- All workstation chairs face the monitors. The chair back is rendered after the seated character, hiding the body and lower head.
+- Browser test logs in as admin/admin, purchases cooling through the new setup UI, checks the unchanged wallet and confirms another account sees the equipped item. Physical device testing is not claimed.
