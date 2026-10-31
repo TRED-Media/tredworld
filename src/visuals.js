@@ -1,5 +1,7 @@
+const characterSheet=new Image();characterSheet.onload=()=>window.dispatchEvent(new Event('game-changed'));characterSheet.src='/art/office-character.png';
 // Original pixel artwork drawn on integer grids; reference UI is rebuilt as live components.
-export function pixelCharacter(c,x,y,color='#6e879e',walk=false,variant=0,frame=0){
+export function pixelCharacter(c,x,y,color='#6e879e',walk=false,variant=0,frame=0,direction=0){
+ if(characterSheet.complete&&characterSheet.naturalWidth){const w=characterSheet.naturalWidth/4,h=characterSheet.naturalHeight/4,col=walk?1+Math.floor(frame/8)%3:0;c.imageSmoothingEnabled=false;c.drawImage(characterSheet,col*w,direction*h,w,h,Math.round(x-21),Math.round(y-34),42,56);return;}
  const r=(a,b,w,h,col)=>{c.fillStyle=col;c.fillRect(Math.round(x+a),Math.round(y+b),w,h);};
  const ink='#202430',hair=['#292c36','#745447','#252b38','#a78a55','#414354','#ab707b','#343340','#67584c'][variant%8],skin=['#f0c5a2','#edbb9f','#dfb18e'][variant%3],step=walk?Math.round(Math.sin(frame*.16)*2):0;
  r(-12,18,25,4,'#26304735');r(-8,8,7,11+step,ink);r(3,8,7,11-step,ink);r(-9,17+step,9,3,'#e9e5d3');r(2,17-step,9,3,'#e9e5d3');r(-10,-5,22,17,ink);r(-8,-4,18,13,color);r(-2,-3,5,10,'#e3e0d3');r(-1,-2,3,3,'#d96a7a');r(-7,0,4,2,'#94acc0');r(-8,10,18,2,'#28354b');r(-13,-2,5,10,ink);r(-12,-1,3,7,skin);r(11,-2,5,10,ink);r(12,-1,3,7,skin);
