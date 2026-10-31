@@ -1,3 +1,4 @@
+import {drawSprite} from './sprite-fit.js';
 import {rarities} from '../shared/catalog.js';
 const cache=new Map();
 const atlases={};for(const [kind,columns,rows] of [['pet',5,4],['vehicle',4,3],['items',5,11],['office',4,3]]){const image=new Image();image.onload=()=>{if(kind==='pet'||kind==='vehicle')prepareAtlas(atlases[kind]);cache.clear();};image.src='/art/'+kind+'-atlas.png';atlases[kind]={image,columns,rows};}
@@ -12,7 +13,7 @@ export function drawItem(ctx,item,x=0,y=0,size=64,time=0,aura=true){
  const box=(x,y,w,h,col)=>{r(x-2,y-2,w+4,h+4,ink);r(x,y,w,h,col);r(x,y,w,2,light);};
  if(t===3&&aura){const p=Math.floor(time/250)%4;for(let i=0;i<8;i++){const xx=5+(i*17+v*3)%53,yy=4+(i*23)%52;if((i+p)%3!==0){r(xx,yy,3,3,'#efa9fa');r(xx-2,yy+1,7,1,'#c582eb');}}}
  const itemRows=['shirt','glasses','hat','shoes','case','monitor','cooling','desk','chair','decor','accessory'];const row=itemRows.indexOf(item.category);const atlas=atlases[row>=0?'items':item.category];
- if(atlas?.image.complete&&atlas.image.naturalWidth){const {image,columns,rows}=atlas,w=image.naturalWidth/columns,h=image.naturalHeight/rows,index=row>=0?row*5+v:item.variant;if(atlas.frames?.[index])ctx.drawImage(atlas.frames[index],2,1,60,58);else {const cuts=[0,.118,.18,.259,.328,.438,.537,.619,.704,.819,.913,1],sy=row>=0?cuts[row]*image.naturalHeight:Math.floor(index/columns)*h,sh=row>=0?(cuts[row+1]-cuts[row])*image.naturalHeight:h;ctx.drawImage(image,index%columns*w,sy,w,sh,2,1,60,58);}}else switch(item.category){
+ if(atlas?.image.complete&&atlas.image.naturalWidth){const {image,columns,rows}=atlas,w=image.naturalWidth/columns,h=image.naturalHeight/rows,index=row>=0?row*5+v:item.variant;if(atlas.frames?.[index])drawSprite(ctx,atlas.frames[index],0,0,atlas.frames[index].width,atlas.frames[index].height,2,1,60,56);else {const cuts=[0,180,275,400,525,680,805,930,1055,1220,1375,1484].map(y=>y/1484),sy=row>=0?cuts[row]*image.naturalHeight:Math.floor(index/columns)*h,sh=row>=0?(cuts[row+1]-cuts[row])*image.naturalHeight:h;const xs=row===10?[0,320,505,675,835,1060]:[0,232,430,630,830,1060];drawSprite(ctx,image,row>=0?xs[v]*image.naturalWidth/1060:index%columns*w,sy,row>=0?(xs[v+1]-xs[v])*image.naturalWidth/1060:w,sh,2,1,60,56);}}else switch(item.category){
  case 'shirt':{box(19,16,26,33,c);r(10,18,9,17,c);r(45,18,9,17,c);r(12,32,6,4,light);r(47,32,6,4,light);r(26,14,12,7,ink);r(29,17,6,4,light);if(v%2)r(30,22,3,27,metal);else r(21,32,22,3,light);r(36,27,5,6,ink);if(v>2){r(18,12,7,9,c);r(39,12,7,9,c);}break;}
  case 'glasses':{const h=8+v*2;box(9,25,18,h,t>1?c:metal);box(37,25,18,h,t>1?c:metal);r(27,29,10,3,ink);r(3,24,7,4,c);r(54,24,7,4,c);r(12,28,12,h-4,'#273c58');r(40,28,12,h-4,'#273c58');r(13,29,7,2,'#b7d8e1');r(41,29,7,2,'#b7d8e1');break;}
  case 'hat':{box(17,18-v,31,24,c);r(12,40-v,44,6,ink);r(v%2?7:16,39-v,v%2?48:35,4,c);r(29,25,8,9,t>1?'#ed9acc':light);r(23,18-v,3,20,metal);if(v===4){r(27,8,10,8,light);}break;}
@@ -30,20 +31,7 @@ export function drawItem(ctx,item,x=0,y=0,size=64,time=0,aura=true){
  else{const cat=item.kind==='cat';oval(16,29,36,25,ink);oval(18,30,32,22,fur);oval(21,35,24,17,cream);oval(11,14,37,30,ink);oval(13,16,33,26,fur);for(const xx of [14,36]){r(xx,cat?6:9,8,15,ink);r(xx+2,cat?9:12,4,11,fur);r(xx+3,14,2,6,'#d79c9b');}if(n===0||n===11){oval(8,19,9,23,ink);oval(9,20,7,20,fur);oval(43,19,9,23,fur);}oval(19,28,24,14,cream);if([3,10,13].includes(n))oval(14,18,12,15,'#576076');r(20,26,3,5,ink);r(37,26,3,5,ink);r(20,26,1,2,cream);r(37,26,1,2,cream);r(28,33,5,3,ink);r(30,36,1,3,ink);r(26,39,4,1,'#c68383');r(32,39,4,1,'#c68383');oval(17,48+bob,12,8,ink);oval(19,48+bob,9,6,cream);oval(36,48-bob,12,8,ink);oval(37,48-bob,9,6,cream);oval(48,29-bob*2,10,16,fur);if(n===11){r(32,41,5,4,'#d54c76');r(39,41,5,4,'#d54c76');}if([4,8,17].includes(n)){for(let i=0;i<3;i++)r(25+i*4,17,2,6,'#a77748');}if(n===18){for(let i=0;i<7;i++)r(16+(i*11)%28,19+(i*7)%27,2,2,['#60e0ed','#ef91f1'][i%2]);}}
  break;}
  }
- if(t===1){ // Studio trim and hardware: visibly different from the Common base.
-  const trim='#b5d2aa';
-  if(item.category==='shirt'){r(21,23,6,8,trim);r(37,34,6,3,trim);}
-  else if(item.category==='hat'){r(18,34-v,29,3,trim);r(40,22,4,4,light);}
-  else if(item.category==='glasses'){r(10,23,16,2,trim);r(38,23,16,2,trim);}
-  else if(item.category==='shoes'){r(9,39,15,3,trim);r(35,43,15,3,trim);}
-  else if(item.category==='case'){r(40,14,4,3,trim);r(40,20,4,3,trim);r(18,50,28,2,trim);}
-  else if(item.category==='monitor'){r(8,43,48,2,trim);r(52,39,3,3,trim);}
-  else if(item.category==='desk'){r(9,36,45,3,trim);r(43,44,8,2,trim);}
-  else if(item.category==='chair'){r(23,14,18,3,trim);r(18,40,28,2,trim);}
-  else if(item.category==='vehicle'){r(29,7,3,10,trim);r(25,45,14,2,trim);}
-  else if(item.category==='pet'){r(15,37,20,3,trim);r(23,40,3,4,'#dec48a');}
-  else {r(24,43,17,2,trim);r(26,46,13,2,trim);}
- }
+ if(t===1){r(22,59,20,2,'#8aad85');}
  if(t>=2){const col=t===2?'#83c8ef':'#f4a6df';r(8,59,48,2,col);if(t===3)r(10,56,4+(Math.floor(time/200)%5)*8,2,col);}
  ctx.restore();
 }
@@ -61,4 +49,4 @@ export function drawWorkstation(ctx,user,items,x,y,w=96,aura=true,time=0){
  ctx.restore();
 }
 
-export function drawOfficeProp(ctx,index,x,y,width,height=width){const a=atlases.office;if(!a.image.complete||!a.image.naturalWidth)return false;const w=a.image.naturalWidth/a.columns,h=a.image.naturalHeight/a.rows;ctx.imageSmoothingEnabled=false;const xs=[0,.31,.56,.755,1],ys=[0,.35,.69,1],col=index%4,row=Math.floor(index/4);ctx.drawImage(a.image,xs[col]*a.image.naturalWidth,ys[row]*a.image.naturalHeight,(xs[col+1]-xs[col])*a.image.naturalWidth,(ys[row+1]-ys[row])*a.image.naturalHeight,x,y,width,height);return true;}
+export function drawOfficeProp(ctx,index,x,y,width,height=width){const a=atlases.office;if(!a.image.complete||!a.image.naturalWidth)return false;const w=a.image.naturalWidth/a.columns,h=a.image.naturalHeight/a.rows;ctx.imageSmoothingEnabled=false;const xs=[0,.31,.56,.755,1],ys=[0,.35,.69,1],col=index%4,row=Math.floor(index/4);drawSprite(ctx,a.image,xs[col]*a.image.naturalWidth,ys[row]*a.image.naturalHeight,(xs[col+1]-xs[col])*a.image.naturalWidth,(ys[row+1]-ys[row])*a.image.naturalHeight,x,y,width,height);return true;}

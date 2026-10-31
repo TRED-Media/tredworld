@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {containRect} from '../src/sprite-fit.js';
+test('wide, tall and square art fit without distortion or cropping',()=>{for(const [sw,sh] of [[180,40],[40,180],[90,90],[1448,850]])for(const [w,h] of [[64,64],[192,192],[40,55],[260,120]]){const d=containRect(sw,sh,7,11,w,h);assert(Math.abs(d.w/d.h-sw/sh)<1e-9);assert(d.x>=7-1e-9&&d.y>=11-1e-9);assert(d.x+d.w<=7+w+1e-9&&d.y+d.h<=11+h+1e-9);}});

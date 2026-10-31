@@ -1,10 +1,11 @@
+import {drawSprite} from './sprite-fit.js';
 const roster=new Image();roster.onload=()=>window.dispatchEvent(new Event('game-changed'));roster.src='/art/staff-roster.png';
 export function characterVariant(user){const ids=['hai','tuyen','hung','thinh','dan','huy','xinh','muoi','freelancer','visitor'];const i=ids.indexOf(user?.id);return i>=0?i:Array.from(user?.id||'').reduce((n,c)=>n+c.charCodeAt(0),0)%12;}
 const characterSheet=new Image();characterSheet.onload=()=>window.dispatchEvent(new Event('game-changed'));characterSheet.src='/art/office-character.png';
 // Original pixel artwork drawn on integer grids; reference UI is rebuilt as live components.
 export function pixelCharacter(c,x,y,color='#6e879e',walk=false,variant=0,frame=0,direction=0){
- if(roster.complete&&roster.naturalWidth){const cuts=[0,.31,.555,.79,1],w=roster.naturalWidth/12,sy=cuts[direction]*roster.naturalHeight,sh=(cuts[direction+1]-cuts[direction])*roster.naturalHeight,bob=walk?Math.round(Math.sin(frame*.2)*1.5):0;c.imageSmoothingEnabled=false;c.drawImage(roster,(variant%12)*w,sy,w,sh,Math.round(x-20),Math.round(y-34+bob),40,55);return;}
- if(characterSheet.complete&&characterSheet.naturalWidth){const w=characterSheet.naturalWidth/4,h=characterSheet.naturalHeight/4,col=walk?1+Math.floor(frame/8)%3:0;c.imageSmoothingEnabled=false;c.drawImage(characterSheet,col*w,direction*h,w,h,Math.round(x-21),Math.round(y-34),42,56);return;}
+ if(roster.complete&&roster.naturalWidth){const cuts=[0,.31,.555,.79,1],w=roster.naturalWidth/12,sy=cuts[direction]*roster.naturalHeight,sh=(cuts[direction+1]-cuts[direction])*roster.naturalHeight,bob=walk?Math.round(Math.sin(frame*.2)*1.5):0;c.imageSmoothingEnabled=false;drawSprite(c,roster,(variant%12)*w,sy,w,sh,Math.round(x-20),Math.round(y-34+bob),40,55);return;}
+ if(characterSheet.complete&&characterSheet.naturalWidth){const w=characterSheet.naturalWidth/4,h=characterSheet.naturalHeight/4,col=walk?1+Math.floor(frame/8)%3:0;c.imageSmoothingEnabled=false;drawSprite(c,characterSheet,col*w,direction*h,w,h,Math.round(x-21),Math.round(y-34),42,56);return;}
  const r=(a,b,w,h,col)=>{c.fillStyle=col;c.fillRect(Math.round(x+a),Math.round(y+b),w,h);};
  const ink='#202430',hair=['#292c36','#745447','#252b38','#a78a55','#414354','#ab707b','#343340','#67584c'][variant%8],skin=['#f0c5a2','#edbb9f','#dfb18e'][variant%3],step=walk?Math.round(Math.sin(frame*.16)*2):0;
  r(-12,18,25,4,'#26304735');r(-8,8,7,11+step,ink);r(3,8,7,11-step,ink);r(-9,17+step,9,3,'#e9e5d3');r(2,17-step,9,3,'#e9e5d3');r(-10,-5,22,17,ink);r(-8,-4,18,13,color);r(-2,-3,5,10,'#e3e0d3');r(-1,-2,3,3,'#d96a7a');r(-7,0,4,2,'#94acc0');r(-8,10,18,2,'#28354b');r(-13,-2,5,10,ink);r(-12,-1,3,7,skin);r(11,-2,5,10,ink);r(12,-1,3,7,skin);
@@ -20,8 +21,8 @@ export function workstationScene(ctx,user,items,time,aura,draw){
  r(18,14,100,124,'#202d40');r(22,18,92,115,'#7c9bab');r(27,22,83,105,'#b2ccd2');r(64,18,5,115,'#35465c');r(22,72,92,5,'#35465c');r(28,28,24,4,'#d6e5e0');
  r(145,35,118,7,'#ba9771');r(145,42,118,4,'#263143');for(let i=0;i<7;i++)r(150+i*13,17+i%3*3,9,18-i%3*3,['#ce8e88','#7b98a5','#d1b878'][i%3]);
  r(317,22,111,57,'#252b43');r(320,25,105,51,'#d0b088');r(324,29,97,43,'#26334e');ctx.fillStyle='#ef718f';ctx.font='bold 30px monospace';ctx.fillText('T-RED',328,60);
- draw(ctx,user,items,100,151,260,aura,time);r(389,179,30,45,'#e1ddd1');r(393,215,22,7,'#afb9b2');for(let i=0;i<10;i++)r(378+i%4*12,128+i*4,16,14,['#446b51','#64896a','#88a576'][i%3]);
+ draw(ctx,user,items,120,70,160,aura,time);r(389,179,30,45,'#e1ddd1');r(393,215,22,7,'#afb9b2');for(let i=0;i<10;i++)r(378+i%4*12,128+i*4,16,14,['#446b51','#64896a','#88a576'][i%3]);
 }
 
 const uiIndices={office:0,quests:1,store:2,inventory:3,profile:4,workspace:5,garage:6,pets:7,coin:8,trophy:9,settings:10,gift:11};
-export const icon=name=>name in uiIndices?`<span class="pixel-icon atlas-icon" aria-hidden="true" style="background-position:${uiIndices[name]%4*100/3}% ${Math.floor(uiIndices[name]/4)*50}%"></span>`:vectorIcon(name);
+export const icon=name=>{if(!(name in uiIndices))return vectorIcon(name);const index=uiIndices[name],col=index%4,row=Math.floor(index/4),xs=[0,380,740,1090,1448],ys=[65,421,770,1055];return `<svg class="pixel-icon" aria-hidden="true" viewBox="${xs[col]} ${ys[row]} ${xs[col+1]-xs[col]} ${ys[row+1]-ys[row]}" preserveAspectRatio="xMidYMid meet"><image href="/art/ui-atlas.png" width="1448" height="1086"/></svg>`;};
