@@ -24,3 +24,5 @@ button{border-radius:3px;border:2px solid #7c8693;box-shadow:inset 2px 2px #f7ea
 .ride-control{bottom:120px}
 
 .setup-shop{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0}.setup-product{min-width:0;padding:8px;background:#2b374d;border:1px solid #67738b;display:flex;align-items:center;flex-direction:column;gap:6px;text-align:center;font-size:11px}.setup-product img{width:76px;height:76px;object-fit:contain;image-rendering:pixelated}.setup-product button{font-size:10px;width:100%;padding:8px 3px}.setup-product b{overflow-wrap:anywhere}.setup-product strong{color:#e0bc82}@media(max-width:500px){.setup-product{font-size:9px;padding:7px 3px}.setup-product img{width:58px;height:58px}.setup-shop{gap:5px}}
+
+.tryon{display:grid;grid-template-columns:192px minmax(0,1fr);gap:12px;align-items:center;border:1px solid #6d7d91;background:#263148;padding:10px;margin:12px 0}.tryon canvas{width:100%;height:auto;image-rendering:pixelated}.tryon small{color:#b5becd}.tryon .sub-tabs{flex-wrap:wrap}.tryon .sub-tabs button{flex:auto}@media(max-width:500px){.tryon{grid-template-columns:130px minmax(0,1fr);font-size:11px}}

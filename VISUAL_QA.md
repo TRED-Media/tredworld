@@ -42,3 +42,11 @@ This is generated reference-based artwork; visual identity is close to the suppl
 - Clothing uses a cached character-pixel material pass and fitted headwear/eyewear rather than inventory icons pasted on the body; portrait and world share the same composition.
 - All workstation chairs face the monitors. The chair back is rendered after the seated character, hiding the body and lower head.
 - Browser test logs in as admin/admin, purchases cooling through the new setup UI, checks the unchanged wallet and confirms another account sees the equipped item. Physical device testing is not claimed.
+
+## Wearables, pets and mounted rendering review
+- Regenerated fitted glasses, hats, tops and shoes matching the five inventory styles, with four directional views each. Removed the rectangular cap, wireframe glasses and clothing recolor approximation. Preview and world use the same wearable composition.
+- Replaced equal-grid slicing and largest-component deletion with calibrated complete silhouettes. In particular, the salamander tail starts before its former cell boundary and car roofs start above the former last-row boundary. All 20 pets and all 12 vehicles retain those pixels.
+- Added in-shop fitting/ride preview with four view controls. Pet preview uses the live follow/step renderer. No ownership or money changes occur from previews.
+- Pets have eased trailing movement, facing mirroring, idle breathing, body sway and articulated foot strips; back-layer companions are occluded by their owner instead of drawing over the owner's head. This is runtime animation of the reference sprites, not a newly drawn four-direction animal atlas.
+- Cars render the driver only inside the windshield cabin. Bikes/scooters use a clipped seated torso and bent legs. Walking character rendering is skipped while mounted. Vehicle labels and world-edge margins avoid covering or clipping the vehicle.
+- QA gallery tests cover 20 wearables and 12 mounted models in four views, all 20 complete pets and changing pet animation frames, alongside the existing responsive/ownership/check-in suite. Canvas-edge checks catch fitting preview clipping. 30 unit/integration tests passed.

@@ -1,0 +1,7 @@
+import {drawItem} from './item-art.js';
+import {pixelCharacter,characterVariant} from './visuals.js';
+export function drawMounted(ctx,user,items,x,y,direction=0,time=0,moving=false,aura=true){const vehicle=items.find(i=>i.id===user?.equipment?.vehicle);if(!vehicle||user.vehicleParked!==false)return false;const car=vehicle.kind==='car',size=car?96:82,angle=(car?[0,Math.PI,Math.PI/2,-Math.PI/2]:[Math.PI,0,-Math.PI/2,Math.PI/2])[direction],vibration=moving?Math.sin(time*.025)*.45:0;
+ ctx.save();ctx.translate(x,y+vibration);ctx.save();ctx.rotate(angle);drawItem(ctx,vehicle,-size/2,-size/2,size,time,aura,false);
+ if(car){ctx.save();ctx.beginPath();ctx.rect(-14,-9,28,17);ctx.clip();ctx.rotate(-angle);ctx.scale(.62,.62);pixelCharacter(ctx,0,20,'#718fa0',false,characterVariant(user),0,direction,user,items);ctx.restore();ctx.fillStyle='#799bb52a';ctx.fillRect(-14,-9,28,17);}ctx.restore();
+ if(!car){ctx.save();ctx.beginPath();ctx.rect(-22,-50,44,54);ctx.clip();pixelCharacter(ctx,0,-8,'#718fa0',false,characterVariant(user),time/16,direction,user,items);ctx.restore();ctx.fillStyle='#26364b';if(direction<2){ctx.fillRect(-13,-1,6,10);ctx.fillRect(7,-1,6,10);ctx.fillStyle='#ead9c1';ctx.fillRect(-13,7,7,3);ctx.fillRect(7,7,7,3);}else{const side=direction===2?-1:1;ctx.fillRect(side*7,-1,9,5);ctx.fillRect(side*10,3,5,9);ctx.fillStyle='#ead9c1';ctx.fillRect(side*10,10,8,3);}}
+ ctx.restore();return true;}

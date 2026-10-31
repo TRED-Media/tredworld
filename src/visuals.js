@@ -1,3 +1,4 @@
+import {atlasRegions} from './atlas-regions.js';
 import {drawSharedWorkstation} from './item-art.js';
 import {dressedFrame} from './wardrobe.js';
 import {spriteFrame,drawSprite} from './sprite-fit.js';
@@ -6,7 +7,7 @@ export function characterVariant(user){const ids=['hai','tuyen','hung','thinh','
 const characterSheet=new Image();characterSheet.onload=()=>window.dispatchEvent(new Event('game-changed'));characterSheet.src='/art/office-character.png';
 // Original pixel artwork drawn on integer grids; reference UI is rebuilt as live components.
 export function pixelCharacter(c,x,y,color='#6e879e',walk=false,variant=0,frame=0,direction=0,user=null,items=[]){
- if(roster.complete&&roster.naturalWidth){const cuts=[0,.31,.555,.79,1],w=roster.naturalWidth/12,sy=cuts[direction]*roster.naturalHeight,sh=(cuts[direction+1]-cuts[direction])*roster.naturalHeight,bob=walk?Math.round(Math.sin(frame*.2)*1.5):0;c.imageSmoothingEnabled=false;const f=dressedFrame(spriteFrame(roster,(variant%12)*w,sy,w,sh),user,items,direction);drawSprite(c,f.image,f.sx,f.sy,f.sw,f.sh,Math.round(x-20),Math.round(y-34+bob),40,55);return;}
+ if(roster.complete&&roster.naturalWidth){const [sx,sy,w,sh]=atlasRegions.roster[direction*12+variant%12],bob=walk?Math.round(Math.sin(frame*.2)*1.5):0;c.imageSmoothingEnabled=false;const f=dressedFrame(spriteFrame(roster,sx,sy,w,sh),user,items,direction);drawSprite(c,f.image,f.sx,f.sy,f.sw,f.sh,Math.round(x-20),Math.round(y-34+bob),40,55);return;}
  if(characterSheet.complete&&characterSheet.naturalWidth){const w=characterSheet.naturalWidth/4,h=characterSheet.naturalHeight/4,col=walk?1+Math.floor(frame/8)%3:0;c.imageSmoothingEnabled=false;drawSprite(c,characterSheet,col*w,direction*h,w,h,Math.round(x-21),Math.round(y-34),42,56);return;}
  const r=(a,b,w,h,col)=>{c.fillStyle=col;c.fillRect(Math.round(x+a),Math.round(y+b),w,h);};
  const ink='#202430',hair=['#292c36','#745447','#252b38','#a78a55','#414354','#ab707b','#343340','#67584c'][variant%8],skin=['#f0c5a2','#edbb9f','#dfb18e'][variant%3],step=walk?Math.round(Math.sin(frame*.16)*2):0;
