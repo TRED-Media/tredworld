@@ -10,3 +10,6 @@ Generated from the owner's supplied T-RED WORLD design boards. These are recreat
 - ui-atlas.png: office, quests, store, inventory; ID, workspace, vehicle, pets; coin, trophy, settings, gift.
 
 Artwork only changes presentation. Purchases, equipment, wallet, permissions and layout remain authoritative game state.
+
+- staff-roster.png: 12 identities, four views. Column selected by stable account ID; view follows local movement. Walking uses a small runtime bob because this atlas contains direction views rather than stride frames.
+- office-scene.png: clean office environment with generated HUD and baked characters removed. The scene is cropped at render time. Editable central desks render independently. Collision rectangles and room zones are maintained in src/world.js; new accounts start in the connecting corridor.
