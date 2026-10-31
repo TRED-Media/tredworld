@@ -17,3 +17,12 @@ Browser suite checks movement, transactions, persistence, equipment, workspace, 
 36 screenshots cover all 13 item categories plus inventory, profile, quests, workspace and map at phone and desktop sizes. World screenshots are also inspected. Captures are reproducible under ignored `work/screenshots/` using the browser suite.
 
 This is generated reference-based artwork; visual identity is close to the supplied boards, not a pixel-identical extraction. Existing rarity variants share base designs and are distinguished by rarity markers.
+
+## Workstation and catalog follow-up
+- Removed the rectangular replacement floor and extra desk sprites that covered the environment. Work points now follow the desks in the scene.
+- E near the player's workstation toggles a back-facing seated pose, typing hands, and screen activity; moving stands up. The sit presence state is shared with other sessions.
+- Facing follows actual movement after collision, not the intended input vector when a wall blocks an axis. Pointer coordinates are mapped through the canvas backing size.
+- A grid reachability check verifies access from the shared corridor to all eight workstation seats.
+- Catalog version 5 archives duplicate sale entries, retaining their IDs, inventory and transaction history. Each of 13 categories offers five items in five rarity levels (65 sale entries). Existing price/visibility administration remains effective after the one-time upgrade.
+- Regenerated icon sheet and coral/slate/beige button treatments from the supplied UI sample.
+- Final validation: 25 unit/integration tests, browser gameplay checks and the 36-screen capture suite.

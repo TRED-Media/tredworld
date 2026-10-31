@@ -1,6 +1,6 @@
 import {DatabaseSync} from 'node:sqlite';
 import {randomUUID,scryptSync,timingSafeEqual} from 'node:crypto';
-import {catalog,rewards,levelInfo} from '../shared/catalog.js';
+import {catalog,rewards,levelInfo,compactCatalog} from '../shared/catalog.js';
 export class GameError extends Error {constructor(message,status=400){super(message);this.status=status;}}
 const fail=(ok,msg,status=400)=>{if(!ok)throw new GameError(msg,status);};
 const day=t=>new Date(t+7*3600000).toISOString().slice(0,10);
@@ -17,7 +17,7 @@ const initial=()=>{
 };
 export class Engine{
  constructor(path=':memory:',seed=null){this.db=new DatabaseSync(path);this.db.exec('PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000; CREATE TABLE IF NOT EXISTS game (id INTEGER PRIMARY KEY CHECK(id=1), data TEXT NOT NULL)');if(!this.db.prepare('SELECT id FROM game').get())this.db.prepare('INSERT INTO game VALUES (1,?)').run(JSON.stringify(seed||initial()));}
- read(){return JSON.parse(this.db.prepare('SELECT data FROM game WHERE id=1').get().data);}
+ read(){const state=JSON.parse(this.db.prepare('SELECT data FROM game WHERE id=1').get().data);if(state.catalogVersion!==5){compactCatalog(state.catalog);state.catalogVersion=5;}return state;}
  close(){this.db.close();}
  tx(fn){this.db.exec('BEGIN IMMEDIATE');try{const s=this.read(),result=fn(s);this.db.prepare('UPDATE game SET data=? WHERE id=1').run(JSON.stringify(s));this.db.exec('COMMIT');return result;}catch(e){this.db.exec('ROLLBACK');throw e;}}
  login(id,password){return this.tx(s=>{const u=s.users.find(u=>u.id===id&&u.active);fail(u&&typeof password==='string'&&password.length<200,'Sai tài khoản hoặc mật khẩu',401);fail(timingSafeEqual(Buffer.from(u.password,'hex'),Buffer.from(passwordHash(password,u.salt),'hex')),'Sai tài khoản hoặc mật khẩu',401);const token=randomUUID()+randomUUID();s.sessions[token]={userId:id,expires:Date.now()+86400000};return token;});}

@@ -24,5 +24,5 @@ export function workstationScene(ctx,user,items,time,aura,draw){
  draw(ctx,user,items,120,70,160,aura,time);r(389,179,30,45,'#e1ddd1');r(393,215,22,7,'#afb9b2');for(let i=0;i<10;i++)r(378+i%4*12,128+i*4,16,14,['#446b51','#64896a','#88a576'][i%3]);
 }
 
-const uiIndices={office:0,quests:1,store:2,inventory:3,profile:4,workspace:5,garage:6,pets:7,coin:8,trophy:9,settings:10,gift:11};
-export const icon=name=>{if(!(name in uiIndices))return vectorIcon(name);const index=uiIndices[name],col=index%4,row=Math.floor(index/4),xs=[0,380,740,1090,1448],ys=[65,421,770,1055];return `<svg class="pixel-icon" aria-hidden="true" viewBox="${xs[col]} ${ys[row]} ${xs[col+1]-xs[col]} ${ys[row+1]-ys[row]}" preserveAspectRatio="xMidYMid meet"><image href="/art/ui-atlas.png" width="1448" height="1086"/></svg>`;};
+const uiIndices={office:0,quests:8,store:3,inventory:11,profile:8,workspace:1,garage:9,pets:5,coin:3,trophy:10,settings:2,gift:7,save:1,start:0,diamond:4,heart:5,star:6,mail:7};
+export const icon=name=>{if(!(name in uiIndices))return vectorIcon(name);const index=uiIndices[name],col=index%4,row=Math.floor(index/4),xs=[40,390,735,1090,1420],ys=[80,400,720,1040];return `<svg class="pixel-icon" aria-hidden="true" viewBox="${xs[col]} ${ys[row]} ${xs[col+1]-xs[col]} ${ys[row+1]-ys[row]}" preserveAspectRatio="xMidYMid meet"><image href="/art/ui-atlas.png" width="1448" height="1086"/></svg>`;};

@@ -32,7 +32,7 @@ export function drawItem(ctx,item,x=0,y=0,size=64,time=0,aura=true){
  break;}
  }
  if(t===1){r(22,59,20,2,'#8aad85');}
- if(t>=2){const col=t===2?'#83c8ef':'#f4a6df';r(8,59,48,2,col);if(t===3)r(10,56,4+(Math.floor(time/200)%5)*8,2,col);}
+ if(t>=2){const col=t>=4?'#edbb62':t===2?'#83c8ef':'#f4a6df';r(8,59,48,2,col);if(t===3)r(10,56,4+(Math.floor(time/200)%5)*8,2,col);}
  ctx.restore();
 }
 export function itemImage(item){const key=item.id;if(cache.has(key))return cache.get(key);const c=document.createElement('canvas');c.width=c.height=64;drawItem(c.getContext('2d'),item);const url=c.toDataURL();cache.set(key,url);return url;}
