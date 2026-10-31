@@ -4,3 +4,5 @@
 @media(max-height:500px) and (orientation:landscape){header{height:48px}.world-top{display:none}.play{padding:8px}#game{height:calc(100dvh - 142px);min-height:170px}#modal article{max-height:94dvh;height:auto}.modal-title{top:-20px}.profile-hero{grid-template-columns:100px 1fr}.profile-grid{grid-template-columns:repeat(4,1fr)}}
 
 .brand:after{display:inline-block}.item-card{position:relative}.quest-art>.pixel-icon{width:34px;height:34px;color:#d4c4a3}
+
+.atlas-icon{display:inline-block;background-image:url('/art/ui-atlas.png');background-size:400% 300%;background-repeat:no-repeat;image-rendering:pixelated;filter:none}.profile-grid .atlas-icon{width:52px;height:52px}.quest-art .atlas-icon{width:46px;height:46px}.setup-info img{display:block;margin:auto}.collection-tabs button,.sub-tabs button{white-space:nowrap}.workspace-preview{border:2px solid #77879b;border-radius:9px;overflow:hidden}
