@@ -1,5 +1,14 @@
 # T-RED reference-based game artwork
 
+Current cardinal artwork (generated for the four-direction update):
+
+- `characters-cardinal.png`: 4 columns (front, back, left, right), 2 rows (male, female). These are visual models; player accounts and ownership are preserved.
+- `wearables-cardinal.png`: 4 directions in columns, rows cap / hoodie / shoes / glasses. Shop thumbnails and worn layers use the same frames and catalog palette.
+- `furniture-straight.png`: 5 columns of designs, desk row then monitor row. All face straight forward.
+- `office-empty-stations.png`: existing environment with editable workstations removed. Real desks, monitors and owner nameplates render independently.
+
+Previous PNGs below are retained as source/archive; the character renderer no longer uses the twelve-person roster or diagonal clothing sprites.
+
 Generated from the owner's supplied T-RED WORLD design boards. These are recreated assets, not extracted source artwork or a pixel-identical reproduction.
 
 - office-character.png: 4 columns x 4 directions, idle and walk frames.

@@ -1,3 +1,4 @@
+import {appearancePresence} from '../shared/presence.js';
 import {withCloudEngine,rpc} from '../server/cloud-store.js';
 import {GameError} from '../server/engine.js';
 import {createHash} from 'node:crypto';
@@ -28,7 +29,7 @@ export default async function handler(req,res){
   if(path==='position'&&req.method==='POST'){
    const user=await withCloudEngine(e=>e.publicUser(e.state(e.auth(token)).me));
    if(!Number.isFinite(body.x)||!Number.isFinite(body.y)||blocked(body.x,body.y))throw new GameError('Vị trí không hợp lệ');
-   await rpc('presence',{...user,position:{x:body.x,y:body.y},animation:['idle','walk','sit','interact','emote'].includes(body.animation)?body.animation:'idle'});return send(200,{ok:true});
+   await rpc('presence',{...user,position:{x:body.x,y:body.y},...appearancePresence(body,user)});return send(200,{ok:true});
   }
   throw new GameError('Không có endpoint này',404);
  }catch(error){return send(error.status||500,{error:error instanceof GameError?error.message:'Lỗi cloud server. Vui lòng thử lại.'});}
