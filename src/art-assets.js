@@ -83,6 +83,7 @@ export function itemSource(item) {
  }
  const rule=atlasRules[`${item.category}-atlas`];
  if(!rule)return null;
+ if(rule.regions?.[item.variant])return spriteFrame(image,...rule.regions[item.variant],rule.isolate);
  const column=item.variant%rule.columns,rowIndex=Math.floor(item.variant/rule.columns);
  const w=image.naturalWidth/rule.columns;
  const top=rule.rowCuts?rule.rowCuts[rowIndex]*image.naturalHeight:rowIndex*image.naturalHeight/rule.rows;

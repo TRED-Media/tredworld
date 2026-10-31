@@ -1,7 +1,10 @@
 export const rooms=[{id:'reception',name:'LỄ TÂN',x:32,y:32,w:310,h:380},{id:'studio',name:'STUDIO / PHOTOBOOTH',x:1030,y:32,w:282,h:400},{id:'meeting',name:'PHÒNG HỌP & LOUNGE',x:452,y:500,w:360,h:416},{id:'storage',name:'KHO & HẬU KỲ',x:32,y:500,w:368,h:416},{id:'pantry',name:'PANTRY & MEDIA',x:912,y:500,w:400,h:416}];
 export const people=['Thịnh','Tuyền','Hưng','Hải','Dân','Xinh','Huy Trần','Muội'];
-export const desks=[{x:480,y:220,owner:0},{x:665,y:220,owner:1},{x:480,y:320,owner:2},{x:665,y:320,owner:3},{x:96,y:560,owner:4},{x:240,y:560,owner:5},{x:1000,y:690,owner:6},{x:1140,y:690,owner:7}];
+export const desks=[{x:480,y:220,owner:0},{x:665,y:220,owner:1},{x:480,y:320,owner:2},{x:665,y:320,owner:3},{x:96,y:560,owner:4},{x:240,y:560,owner:5},{x:1000,y:690,owner:6},{x:1140,y:690,owner:7},{x:902,y:275,owner:8}].map(d=>({...d,seat:{x:0,y:0}}));
 // Collision rectangles follow the clean office scene, with gaps at visible doors.
 const sceneRect=(x,y,w,h)=>({x:x*1344/1448,y:(y-31)*1344/1448,w:w*1344/1448,h:h*1344/1448});
 export const obstacles=[[375,110,14,310],[490,486,395,14],[475,530,14,350],[875,490,14,120],[875,710,14,170],[490,866,390,16],[940,486,410,14],[935,490,14,160],[935,840,14,40],[940,866,410,16],[1342,490,14,390],[20,866,450,16],[598,598,170,100],[550,752,245,80],[144,247,195,65],[155,417,190,48],[1120,365,180,65],[977,552,245,74]].map(r=>sceneRect(...r));
-export function blocked(x,y){if(x<20||x>1324||y<20||y>1220)return true;if(obstacles.some(r=>x>r.x-6&&x<r.x+r.w+6&&y>r.y-6&&y<r.y+r.h+6))return true;return desks.some(d=>x>d.x-12&&x<d.x+104&&y>d.y-12&&y<d.y+63);}
+export function blocked(x,y){if(x<20||x>1324||y<20||y>1220)return true;if(obstacles.some(r=>x>r.x-6&&x<r.x+r.w+6&&y>r.y-6&&y<r.y+r.h+6))return true;return desks.some(d=>x>d.seat.x-61&&x<d.seat.x+61&&y>d.seat.y-56&&y<d.seat.y-4);}
+
+const chairSources=[[590,320],[770,328],[610,435],[785,435],[240,716],[380,716],[1145,812],[1285,812],[1023,409]];
+desks.forEach((d,i)=>{d.seat={x:chairSources[i][0]*1344/1448,y:(chairSources[i][1]-31)*1344/1448};d.x=d.seat.x-48;d.y=d.seat.y-60;});

@@ -1,3 +1,4 @@
+import {atlasRegions} from './atlas-regions.js';
 // World-space pixels. Actor root remains compatible with saved positions;
 // all anatomical anchors are relative to the floor, 21 pixels below that root.
 export const directions=['front','back','left','right'];
@@ -40,8 +41,8 @@ export function attachmentBox(slot,direction,anatomy){
 export const atlasRules={
  'characters-cardinal':{columns:4,rows:2},'wearables-cardinal':{columns:4,rows:4},
  'furniture-straight':{columns:5,rows:2},
- 'vehicle-atlas':{columns:4,rows:3,rowCuts:[0,455/1374,870/1374,1],isolate:true},
- 'pet-atlas':{columns:5,rows:4,isolate:true}
+ 'vehicle-atlas':{columns:4,rows:3,rowCuts:[0,455/1374,870/1374,1],regions:atlasRegions.vehicle,isolate:true},
+ 'pet-atlas':{columns:5,rows:4,regions:atlasRegions.pet,isolate:true}
 };
 export const stationRules={
  desk:{x:0,y:22,w:96,h:56,layer:1},chair:{x:31,y:65,w:36,h:47,layer:5},

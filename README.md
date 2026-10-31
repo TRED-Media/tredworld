@@ -94,3 +94,7 @@ Browser test cần Chromium. Mặc định `/usr/bin/chromium`; có thể đặt
 - Realtime đồng bộ vị trí, trạng thái, outfit, workstation, pet, xe trong local; vị trí di chuyển là presence tạm, không khôi phục vị trí cuối sau restart. Chưa có chat/cử chỉ hoặc offline mutation queue.
 - Offline shell có cache; giao dịch/đăng nhập/nhiệm vụ vẫn cần backend online. Không ghi điểm hoặc RC giả khi mất mạng.
 - Kiểm thử mobile là Chromium với viewport/touch mô phỏng, chưa xác nhận PWA installation, camera thật, hiệu năng pin và FPS trên điện thoại thật.
+
+## Tài khoản test quản trị
+
+Chọn **Admin Test**, hoặc nhập ID **admin**, mật khẩu **admin**. Tài khoản có quyền Founder và mua vật phẩm không trừ RC; quyền này được kiểm tra trên server và chỉ áp dụng cho ID admin. Giám đốc Thịnh có ngân sách setup ban đầu 1.000.000 RC. Nhân sự thường dùng bộ bàn/ghế/case/màn hình cơ bản và tự mua nâng cấp; đồ đã mua trước đó được giữ nguyên.

@@ -8,7 +8,7 @@ export function mountVehiclePreview(root,user,catalog){
   button.onclick=()=>{if(value==='motion')view.moving=!view.moving;else view.model=value;};controls.append(button);
  }
  root.append(controls);
- const models=[...new Map(catalog.filter(i=>i.category==='vehicle').map(i=>[i.variant,i])).values()].sort((a,b)=>a.variant-b.variant);
+ const models=[];for(const item of catalog.filter(i=>i.category==='vehicle'))if(!models.some(i=>i.variant===item.variant))models.push(catalog.find(i=>i.category==='vehicle'&&i.variant===item.variant&&i.active)||item);models.sort((a,b)=>a.variant-b.variant);
  const rows=models.map(vehicle=>{
   const card=document.createElement('section'),title=document.createElement('p'),canvas=document.createElement('canvas');
   title.textContent=vehicle.name+' · '+({bike:'Đạp xe',scooter:'Ngồi lái',motorbike:'Tư thế thể thao',car:'Trong khoang xe'}[vehicle.kind]||'Lái xe');

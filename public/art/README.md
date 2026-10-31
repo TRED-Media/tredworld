@@ -22,3 +22,6 @@ Artwork only changes presentation. Purchases, equipment, wallet, permissions and
 
 - staff-roster.png: 12 identities, four views. Column selected by stable account ID; view follows local movement. Walking uses a small runtime bob because this atlas contains direction views rather than stride frames.
 - office-scene.png: clean office environment with generated HUD and baked characters removed. The scene is cropped at render time. Editable central desks render independently. Collision rectangles and room zones are maintained in src/world.js; new accounts start in the connecting corridor.
+
+- wear-glasses.png, wear-hat.png, wear-shirt.png, wear-shoes.png: regenerated fitted equipment layers, five shop styles in front/back/left/right views. Regions are measured in src/wear-regions.js; src/wardrobe.js composes the same layers for portraits, office characters and shop fitting previews.
+- src/atlas-regions.js records complete silhouettes for 20 pets, 12 vehicles and 48 character views, replacing equal-grid crops that cut tails, car roofs and adjacent character fragments. Source PNGs are preserved.

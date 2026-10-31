@@ -7,7 +7,7 @@ import {join} from 'node:path';
 import {createGameServer} from '../server/index.js';
 
 const dir=mkdtempSync(join(tmpdir(),'tred-appearance-'));
-const {server,streams}=createGameServer({dbPath:join(dir,'test.sqlite')});
+const {server,streams,engine}=createGameServer({dbPath:join(dir,'test.sqlite')});
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const vite=await createServer({configFile:false,server:{host:'127.0.0.1',port:0,proxy:{'/api':{target:`http://127.0.0.1:${server.address().port}`,changeOrigin:false}}}});
 await vite.listen();
@@ -103,9 +103,9 @@ try {
   const skinFailures=[],roofFailures=[];
   const vehicleBase=document.createElement('canvas');vehicleBase.width=128;vehicleBase.height=128;
   const vc=vehicleBase.getContext('2d');
-  for(const vehicle of state.catalog.filter(item=>item.category==='vehicle'))for(const id of ['hai','tuyen'])for(let direction=0;direction<4;direction++){
+  for(const vehicle of state.catalog.filter(item=>item.category==='vehicle'))for(const id of ['hai','tuyen'])for(let direction=0;direction<4;direction++)for(const phase of [0,7,14,21]){
    ctx.clearRect(0,0,128,128);
-   drawRider(ctx,{...rider,id},state.catalog,vehicle,64,64,{direction,frame:8,aura:false});vehicles++;
+   drawRider(ctx,{...rider,id},state.catalog,vehicle,64,64,{direction,frame:phase,moving:true,aura:false});vehicles++;
    if(vehicle.kind==='car'){
     const rule=vehicleRules.car,angle=rule.angles[direction],mount=vehicle.mount||vehicle.art?.mount||rule.mount;
     vc.clearRect(0,0,128,128);vc.save();vc.translate(64,64);vc.rotate(angle);
@@ -127,7 +127,7 @@ try {
     for(let n=0;n<data.length;n+=4)if(data[n]>140&&data[n]>data[n+1]*1.12&&data[n+1]>data[n+2]*1.08&&data[n+3]>40)skin++;
     if(skin<2)skinFailures.push({vehicle:vehicle.id,id,direction,skin});
    }
-   if(vehicle.tier===0&&id==='hai'){
+   if(vehicle.tier===0&&id==='hai'&&phase===7){
     g.save();g.translate(direction*192+96,vehicle.variant*110+55);drawRider(g,rider,state.catalog,vehicle,0,0,{direction,aura:false});g.restore();
    }
   }
@@ -188,6 +188,26 @@ try {
   await page.waitForFunction(async facing=>{const {game}=await import('/src/economy-ui.js');return game.world.find(u=>u.id===game.state.me.id)?.facing===facing;},facing);
  }
  console.log('PASS movement direction reaches authoritative presence and returns to the world renderer');
+ // Exercise actual persistent mount/park actions, movement and animation state.
+ engine.mutate('thinh','adjust',{userId:'dan',rc:1000,reason:'Isolated rider integration test'},'rider-qa-credit');
+ await page.evaluate(async()=>{const {api}=await import('/src/api.js');await api.action('purchase',{itemId:'vehicle-0-0'});await api.action('equip',{itemId:'vehicle-0-0'});window.dispatchEvent(new Event('game-changed'));});
+ await page.waitForFunction(async()=>{const {game}=await import('/src/economy-ui.js');return game.state.me.equipment.vehicle==='vehicle-0-0';});
+ await page.locator('#ride-vehicle').click();
+ await page.waitForFunction(async()=>{const {game}=await import('/src/economy-ui.js');return game.state.me.vehicleParked===false&&game.animation==='drive';});
+ await page.keyboard.down('s');
+ await page.waitForFunction(async()=>{const {game}=await import('/src/economy-ui.js');const me=game.world.find(u=>u.id==='dan');return me?.animation==='drive'&&me.moving===true;});
+ await page.keyboard.up('s');
+ await page.waitForFunction(async()=>{const {game}=await import('/src/economy-ui.js');return game.world.find(u=>u.id==='dan')?.moving===false;});
+ await page.keyboard.down('s');
+ await page.waitForFunction(async()=>{const {game}=await import('/src/economy-ui.js');return game.world.find(u=>u.id==='dan')?.position.y>=1000;},null,{timeout:10000});
+ await page.keyboard.up('s');await page.locator('#ride-vehicle').click();
+ await page.waitForFunction(async()=>{const {game}=await import('/src/economy-ui.js');return game.state.me.vehicleParked===true&&game.animation==='idle';});
+ console.log('PASS authoritative mount → moving rider → stationary rider → park → walking transition');
+ await page.locator('[data-page=garage]').click().catch(async()=>{await page.locator('[data-page=profile]').click();await page.locator('[data-action=garage]').click();});
+ await page.locator('[data-action=vehicle-preview]').click();
+ assert.equal(await page.locator('#vehicle-pose-preview canvas').count(),12);
+ await page.screenshot({path:'work/screenshots/vehicle-preview-mobile.png'});
+ console.log('PASS all twelve models have a live four-direction rider preview');
  assert.deepEqual(errors,[]);
 } catch(error) {
  await page.screenshot({path:'work/screenshots/appearance-failure.png'}).catch(()=>{});

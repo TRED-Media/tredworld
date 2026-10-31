@@ -55,6 +55,16 @@ These numbers describe the existing cars; calibrate the polygon against the actu
 
 Prepared body, hand, tint and thumbnail caches have size limits. Warm animation should allocate no new canvases. All shop/detail/workstation thumbnails subscribe to art readiness, so placeholder art is replaced when the actual source loads.
 
+## Vehicle riders
+
+`src/vehicle-rig.js` resolves a shared type profile, model-specific overrides and optional `vehicle.rider` overrides. Two-wheel anchors (`seat`, two `grips`, two `feet`) are normalized to the fitted vehicle rectangle. Declare the native sprite axis as `forward: 'up'` or `'down'`; it controls both vehicle rotation and rider orientation. Optional `vehicle.rig` dimensions must be positive. Anchor and scale validation rejects malformed profiles before rendering.
+
+The pose solver builds shoulders, elbows, hips and knees from the saddle and contact anchors. Bicycles move their pedals only while moving; scooters and motorcycles keep their feet at the declared supports. Arms reach each grip. Clothing and skin reuse the character's prepared textures, while standing legs are excluded. Far limbs, vehicle, near limbs, front fairing, hands and head have an explicit composition order. The per-model rider data covers all twelve existing designs without separate scene or preview offsets.
+
+The local actor updates immediately. `PresenceMotion` interpolates each remote actor once, follows cardinal legs across missed corner packets and supplies the same root and facing to vehicle, rider and labels. Mount state comes from authoritative `vehicleParked`, including after reconnect. Parking restores the walking renderer.
+
+The garage's **Xem tư thế lái** action (also `?preview=vehicles` after login) previews every model with front, back, left and right riders, both base models, movement and pause controls. It does not buy or equip items. Existing live check-in, workstation equipment and ownership data remain in place.
+
 ## Checks
 
 ```sh
@@ -64,4 +74,4 @@ npm run test:browser
 npm run test:assets
 ```
 
-The asset browser audit uses an isolated temporary database. It checks every catalog asset (including archived ownership references), both models, all cardinal views, accessory proportions, unchanged trouser-cuff pixels, seated legs, palette invalidation, fractional atlas boundaries and warm-frame canvas allocation. Car renders are compared with the original vehicle: pixels outside the windshield must stay unchanged, while the driver's face remains visible behind glass. It also runs fitting-room and authoritative movement checks. Captures are written to ignored `work/screenshots/` for visual review; do not update gameplay databases or remove owned items to repair presentation.
+The asset browser audit uses an isolated temporary database. It checks every catalog asset (including archived ownership references), both models, all cardinal views, four riding phases, accessory proportions, unchanged trouser-cuff pixels, seated legs, palette invalidation, fractional atlas boundaries and warm-frame canvas allocation. Car renders are compared with the original vehicle: pixels outside the windshield must stay unchanged, while the driver's face remains visible behind glass. It also runs fitting-room and authoritative mount, movement and parking checks. Captures are written to ignored `work/screenshots/` for visual review; do not update gameplay databases or remove owned items to repair presentation.

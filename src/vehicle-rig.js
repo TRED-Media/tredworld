@@ -20,7 +20,8 @@ export const riderModels={
  8:{seat:[.5,.25],grips:[[.18,.48],[.82,.48]],feet:[[.3,.49],[.7,.49]],lean:7,torso:8}
 };
 export function vehicleProfile(vehicle){
- const original=vehicleRules[vehicle.kind]||vehicleRules.bike;
+ if(!vehicle||!vehicleRules[vehicle.kind])throw new Error('Unknown vehicle kind');
+ const original=vehicleRules[vehicle.kind];
  const base={...original,...vehicle.rig};
  if(!Number.isFinite(base.w)||!Number.isFinite(base.h)||base.w<=0||base.h<=0)throw new Error('Invalid vehicle size');
  const type=riderTypes[vehicle.kind],model=riderModels[vehicle.variant]||{};
@@ -31,6 +32,7 @@ export function vehicleProfile(vehicle){
  return {...base,rider,angles};
 }
 export function validateRider(rider){
+ if(rider.forward&&!['up','down'].includes(rider.forward))throw new Error('Vehicle forward axis must be up or down');
  for(const point of [rider.seat,...(rider.grips||[]),...(rider.feet||[])])if(!Array.isArray(point)||point.length!==2||!point.every(n=>Number.isFinite(n)&&n>=0&&n<=1))throw new Error('Rider anchors must be normalized');
  if(rider.grips?.length!==2||rider.feet?.length!==2)throw new Error('Rider requires two grips and foot supports');
  if(!Number.isFinite(rider.scale)||rider.scale<=0||rider.scale>1.5||!Number.isFinite(rider.lean)||!Number.isFinite(rider.torso)||rider.torso<=0)throw new Error('Invalid rider proportions');
