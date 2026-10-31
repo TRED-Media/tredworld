@@ -1,0 +1,2 @@
+# Art direction
+Top-down 2D pixel art. Navy #171e2b; panels #20293b; coral #dc6076; light gray tile floors; cream walls; green plants. Canvas disables smoothing and uses integer-aligned drawing. Characters are layered procedural silhouettes with a walk cycle. Furniture, plants and vehicles are drawn separately, never cropped from reference mockups. Current procedural art is a first pass, less detailed than reference illustrations. Sprite atlas pipeline and directional sprite sheets remain pending.

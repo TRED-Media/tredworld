@@ -1,0 +1,2 @@
+# Architecture
+Vite + TypeScript UI, Canvas2D renderer. src/world.js defines rooms, desks and collision; src/main.ts contains simulation, camera, floating joystick, desktop controls, panels and same-origin BroadcastChannel presence. The renderer currently replaces Phaser to keep the first playable version small. No server or real account identity exists yet. Simulation changes position only; clients cannot transact real XP or RC because no economy API is exposed. Future backend integration must replace local demo storage and presence, not treat them as authoritative.

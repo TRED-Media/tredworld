@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {blocked,rooms,desks,people} from '../src/world.js';
+test('eight employees and unique room IDs',()=>{assert.equal(people.length,8);assert.equal(new Set(rooms.map(r=>r.id)).size,rooms.length);});
+test('walls block and doors allow passage',()=>{for(const r of rooms){assert.equal(blocked(r.x+30,r.y),true);assert.equal(blocked(r.x+r.w/2,r.y+r.h),false);}});
+test('furniture blocks movement; main corridor reaches parking',()=>{for(const d of desks)assert.equal(blocked(d.x+30,d.y+20),true);for(let y=740;y<1200;y+=4)assert.equal(blocked(700,y),false);assert.equal(blocked(-5,300),true);});
