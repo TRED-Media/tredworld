@@ -1,7 +1,7 @@
-# Progress
-Implemented: project, original procedural office world, collision, eight sample employees, desktop movement, floating drag joystick, camera follow, parking access, desk inspection, responsive shell, profile and static wallet, demo task marks and check-in persistence, same-origin two-tab presence transport.
+# Trạng thái thực tế
 
-Pending: verified browser interaction tests, internet multiplayer, Supabase auth/schema/RLS, sprite atlas,  seated and directional avatar animation,   transactions, evidence, approvals, catalog, customization, workspace synchronization, integrations. No Vercel deployment or Supabase changes performed.
+Tích hợp economy vào bản đồ Canvas cũ: server local + SQLite + SSE, catalog 288 items, Store/Inventory/equip, workstation layout, garage/pet ownership, quest approval/rewards, wallet/audit, local RBAC và admin.
 
-## Gameplay update
-Added position-aware office map, two-finger zoom, status settings saved locally, reception reset, restored check-in display, manifest/icon and basic network-first same-origin offline cache. Browser/mobile acceptance remains unverified; online backend remains pending.
+Không coi đây là đã hoàn thành mọi yêu cầu của game master prompt: chưa mở rộng 40–60 bàn, không đủ tất cả sprite animation, không có hạ tầng production hoặc deployment mới. Phạm vi lượt này theo chỉ dẫn cuối là economy tích hợp giữ gameplay hiện có.
+
+Chi tiết chạy, demo credentials và giới hạn trong README. Bằng chứng kiểm thử trong TESTING.md.

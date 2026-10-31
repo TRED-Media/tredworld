@@ -3,5 +3,16 @@
   "framework": "vite",
   "installCommand": "npm ci",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/game?route=:path*"
+    }
+  ],
+  "functions": {
+    "api/game.js": {
+      "maxDuration": 30
+    }
+  }
 }

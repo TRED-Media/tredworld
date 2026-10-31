@@ -5,3 +5,6 @@ test-results/
 .env.*
 !.env.example
 .vercel/
+
+data/
+work/

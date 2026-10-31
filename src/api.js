@@ -1,0 +1,12 @@
+// Replace this adapter to use a hosted backend. No game rules live in the client.
+export const requestId=()=>globalThis.crypto.randomUUID?.()||Array.from(globalThis.crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('');
+export class LocalAdapter{
+ constructor(base=import.meta.env.VITE_GAME_API_URL||''){this.base=base;}
+ async request(path,body,key){const response=await fetch(this.base+'/api/'+path,{credentials:'include',headers:{...(body?{'Content-Type':'application/json'}:{}),...(key?{'Idempotency-Key':key}:{})},method:body?'POST':'GET',...(body?{body:JSON.stringify(body)}:{})});let data;try{data=await response.json();}catch{throw new Error('Backend local chưa chạy. Khởi động bằng npm run dev.');}if(!response.ok){const error=new Error(data.error||'Không thể kết nối');error.status=response.status;throw error;}return data;}
+ login(id,password){return this.request('login',{id,password});}
+ state(){return this.request('state');}
+ action(name,body,key=requestId()){return this.request('action/'+name,body,key);}
+ subscribe(callback){if(import.meta.env.VITE_GAME_TRANSPORT==='poll'){let stopped=false,revision=null;const tick=async()=>{try{const data=await this.request('world');if(stopped)return;callback(data);if(revision!==null&&revision!==data.revision)window.dispatchEvent(new Event('game-changed'));revision=data.revision;}catch{if(!stopped)window.dispatchEvent(new CustomEvent('game-network',{detail:'Đang kết nối lại…'}));}finally{if(!stopped)setTimeout(tick,1000);}};void tick();return ()=>{stopped=true;};}const stream=new EventSource(this.base+'/api/events',{withCredentials:true});stream.addEventListener('world',e=>callback(JSON.parse(e.data)));stream.addEventListener('changed',()=>window.dispatchEvent(new Event('game-changed')));stream.onerror=()=>window.dispatchEvent(new CustomEvent('game-network',{detail:'Đang kết nối lại…'}));stream.onopen=()=>window.dispatchEvent(new CustomEvent('game-network',{detail:'Đã kết nối server local'}));return ()=>stream.close();}
+ position(x,y,animation){if(import.meta.env.VITE_GAME_TRANSPORT==='poll'){if(this.sending||Date.now()-(this.lastSent||0)<600)return Promise.resolve();this.lastSent=Date.now();this.sending=true;return this.request('position',{x:Math.round(x),y:Math.round(y),animation}).finally(()=>{this.sending=false;});}return this.request('position',{x:Math.round(x),y:Math.round(y),animation});}
+}
+export const api=new LocalAdapter();
