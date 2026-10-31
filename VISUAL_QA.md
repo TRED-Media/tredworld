@@ -26,3 +26,11 @@ This is generated reference-based artwork; visual identity is close to the suppl
 - Catalog version 5 archives duplicate sale entries, retaining their IDs, inventory and transaction history. Each of 13 categories offers five items in five rarity levels (65 sale entries). Existing price/visibility administration remains effective after the one-time upgrade.
 - Regenerated icon sheet and coral/slate/beige button treatments from the supplied UI sample.
 - Final validation: 25 unit/integration tests, browser gameplay checks and the 36-screen capture suite.
+
+## Photo check-in, restored collections and vehicle flow
+- Restored all 20 reference pets and one sale entry for each of the 12 reference vehicle models. Previous purchases and legacy IDs stay available in inventory; other item categories retain five sale entries.
+- Recalibrated eight chair centers from the scene and use clipped seated poses instead of offset replacement chair blocks. Added a matching second editing chair for the two assigned editing staff.
+- Clicking the player's chair nearby opens camera/file photo check-in. Camera access starts only after the user opens it; streams stop on capture or modal close. Successful server check-in stores the compressed image, seats the character and grants check-in XP at most once per shift/day rules.
+- Riding requires an owned, equipped vehicle. Parking is offered in the parking area, and the server rejects work check-in while riding. Purchased clothing uses the owned artwork; equipped pets accompany walking characters.
+- Wide viewports use a uniform camera zoom minimum rather than stretching the scene or leaving the world uncovered on the right. Verified a 2560x1440 capture.
+- Browser verification includes actual keyboard movement to the assigned chair, clicking it, image submission and entering Working state, in addition to ownership, wardrobe, restored collections, proportional rendering and responsive screens. Physical device cameras are not claimed tested.

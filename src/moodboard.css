@@ -18,3 +18,7 @@
 button{border-radius:3px;border:2px solid #7c8693;box-shadow:inset 2px 2px #f7ead266,2px 3px #171f2e}.primary,nav button.active{background:#cd626c;border:2px solid #f0c2ae;box-shadow:inset 2px 2px #f4a2a1,2px 3px #413443}.eco-form .primary .pixel-icon{width:24px;height:24px;margin-right:8px}#eco-settings,[data-action=settings]{background:#d3af79;color:#303b4b}.item-card{border-radius:3px}
 
 .rarity-guide{grid-template-columns:repeat(5,minmax(0,1fr))}.rarity-guide>div{overflow-wrap:anywhere}
+
+.ride-control{position:absolute;bottom:65px;right:16px;z-index:3;font-size:11px;padding:8px}#game{max-width:100%;display:block}.game-frame{overflow:hidden}
+.ride-control{bottom:90px}
+.ride-control{bottom:120px}
