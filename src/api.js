@@ -2,7 +2,7 @@
 export const requestId=()=>globalThis.crypto.randomUUID?.()||Array.from(globalThis.crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('');
 export class LocalAdapter{
  constructor(base=import.meta.env.VITE_GAME_API_URL||''){this.base=base;}
- async request(path,body,key){const response=await fetch(this.base+'/api/'+path,{credentials:'include',headers:{...(body?{'Content-Type':'application/json'}:{}),...(key?{'Idempotency-Key':key}:{})},method:body?'POST':'GET',...(body?{body:JSON.stringify(body)}:{})});let data;try{data=await response.json();}catch{throw new Error('Backend local chưa chạy. Khởi động bằng npm run dev.');}if(!response.ok){const error=new Error(data.error||'Không thể kết nối');error.status=response.status;throw error;}return data;}
+ async request(path,body,key){const response=await fetch(this.base+'/api/'+path,{credentials:'include',headers:{...(body?{'Content-Type':'application/json'}:{}),...(key?{'Idempotency-Key':key}:{})},method:body?'POST':'GET',...(body?{body:JSON.stringify(body)}:{})});let data;try{data=await response.json();}catch{throw new Error('Không nhận được phản hồi API. Kiểm tra kết nối hoặc server đang chạy.');}if(!response.ok){const error=new Error(data.error||'Không thể kết nối');error.status=response.status;throw error;}return data;}
  login(id,password){return this.request('login',{id,password});}
  state(){return this.request('state');}
  action(name,body,key=requestId()){return this.request('action/'+name,body,key);}

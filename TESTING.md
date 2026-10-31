@@ -30,3 +30,10 @@ Screenshot: `work/screenshots/world-mobile.png`, `store-mobile.png`, `world-desk
 ## Chưa xác minh / giới hạn
 
 Không test thiết bị điện thoại thật, camera thật, PWA install, offline gameplay mutations, 40–60 người đồng thời, tải dài ngày hoặc dịch vụ production. Test hai phiên không có nghĩa đã hoàn thiện tất cả tính năng multiplayer của master prompt. Những animation/độ chi tiết art chưa đủ được nêu trong README.
+
+## Bổ sung triển khai cloud
+
+- `npm test`: **22/22 pass**, thêm test compare-and-swap đồng thời, rollback khi từ chối mutation và Vercel HTTP handler (login/mua/state/presence/phân quyền) với remote store giả lập.
+- `VITE_GAME_TRANSPORT=poll npm run build`: pass.
+- Supabase: đã seed 10 nhân vật, 288 item, 36 nhiệm vụ; kiểm tra capability sai bị từ chối và anon không đọc trực tiếp bảng. Security advisor không còn lint sau khi tách private definer/public invoker.
+- Vercel xác nhận deployment READY. Công cụ web-fetch của connector báo không truy cập được deployment; chưa kiểm thử browser end-to-end trực tiếp trên production. Không coi test adapter giả lập là kiểm thử đăng nhập trên site thật.
