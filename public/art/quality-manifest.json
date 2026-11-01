@@ -162,6 +162,70 @@
       "role": "preserved-reference",
       "quality": "legacy-reference",
       "legacySha256": "620c5547d01b085b659a67b429cdb34fd12a615a723281b193edfc23ad065a41"
+    },
+    {
+      "file": "chairs-rear.png",
+      "width": 640,
+      "height": 192,
+      "sha256": "ad713dcc5493e10a9f72f9998134080e5d926fecc7233baf21d27362035f1d9b",
+      "introducedIn": "workstation-wearable-fix-2026-11-01",
+      "role": "runtime",
+      "quality": "strict",
+      "frameSize": [
+        128,
+        192
+      ],
+      "columns": 5,
+      "rows": 1,
+      "anchor": [
+        64,
+        172
+      ],
+      "palette": [
+        "#101321",
+        "#171b2a",
+        "#202434",
+        "#292e41",
+        "#34394e",
+        "#41475d",
+        "#50566c",
+        "#656c80",
+        "#7d8395",
+        "#a1a5b2",
+        "#c6c6cd",
+        "#dedbd8",
+        "#eee8dd",
+        "#f6f0e5",
+        "#242d43",
+        "#30415d",
+        "#3c5277",
+        "#375e98",
+        "#356cac",
+        "#4387cf",
+        "#6ea5e8",
+        "#a5c6ed",
+        "#211e28",
+        "#352c33",
+        "#533b35",
+        "#704b36",
+        "#8a593c",
+        "#a56d48",
+        "#c0895d",
+        "#d4a67e",
+        "#4b2936",
+        "#783341",
+        "#a83f4a",
+        "#d34d56",
+        "#f46169",
+        "#ff8b8b"
+      ],
+      "maxColors": 36,
+      "provenance": {
+        "method": "Image generation rear-view edit of original items-atlas chair designs; candidate-only nearest sampling and locked palette",
+        "sourceSha256": "1caf15fcfddbcbbba5b1dd7ea10358d819fce659af57317852b4f70f2d9956ab",
+        "exporter": "scripts/prepare-chair-rear.mjs",
+        "sharedScale": 0.3
+      }
     }
   ]
 }

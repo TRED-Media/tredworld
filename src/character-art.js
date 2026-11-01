@@ -1,5 +1,6 @@
 import {vehicleProfile,riderPose} from './vehicle-rig.js';
 import {actorAnatomy} from './actor-anatomy.js';
+import {shirtFit} from './wearable-fit.js';
 import {containRect,drawFrame,spriteFrame} from './sprite-fit.js';
 import {cardinalFrame,wardrobeSource,itemSource,artRevision} from './art-assets.js';
 import {actorRig,wardrobeSlots,wearableRules,wearableBox,attachmentBox,vehicleMount,vehicleRules,directionIndex,animationPose,textureKey,FrameCache} from './asset-rules.js';
@@ -22,7 +23,9 @@ function handLayer(f,model,direction){
  const pixels=ctx.getImageData(0,0,f.sw,f.sh);
  for(let y=0;y<f.sh;y++)for(let x=0;x<f.sw;x++){
   const n=(y*f.sw+x)*4,r=pixels.data[n],g=pixels.data[n+1],b=pixels.data[n+2];
-  if(y<f.sh*actorRig.hands.from||y>f.sh*actorRig.hands.to||!(r>g*1.13&&g>b*1.08&&r>130))pixels.data[n+3]=0;
+  // Keep continuous neck, arms and hands. The old wrist-only strip left a gap
+  // below short sleeves; drawing it last also painted skin over jacket cuffs.
+  if(y<f.sh*.35||y>f.sh*.80||!(r>g*1.13&&g>b*1.08&&r>130))pixels.data[n+3]=0;
  }
  ctx.putImageData(pixels,0,0);const result={image,sx:0,sy:0,sw:f.sw,sh:f.sh};hands.set(key,result);return result;
 }
@@ -41,11 +44,15 @@ function bodyFrame(model,direction,equipment){
   c.drawImage(source.image,source.sx,source.sy,source.sw,source.sh,d.x,d.y,d.w,d.h);c.restore();
  };
  if(worn.shirt){
-  c.save();c.beginPath();c.rect(-24,actorRig.head.top,48,actorRig.head.bottom-actorRig.head.top);c.rect(-24,actorRig.waist,48,(worn.shoes?anatomy.cuffY:0)-actorRig.waist);c.clip();full();c.restore();
-  c.fillStyle='#e8b28e';const neck=actorRig.neck;c.fillRect(neck.x,neck.y,neck.w,neck.h);
-  fitted(c,worn.shirt,wearableBox('shirt',direction));
+  const headCut=anatomy.neck.y-(direction===1?0:1.5);
+  c.save();c.beginPath();c.rect(-24,actorRig.head.top,48,headCut-actorRig.head.top);c.rect(-24,anatomy.waistY,48,(worn.shoes?anatomy.cuffY:0)-anatomy.waistY);c.clip();full();c.restore();
   full(handLayer(base,model,direction));
-  c.save();c.beginPath();c.rect(-24,actorRig.head.top,48,actorRig.head.bottom-actorRig.head.top);c.clip();full();c.restore();
+  fitted(c,worn.shirt,shirtFit(worn.shirt,equipment.shirt,direction,anatomy));
+  // Original chin/neck and hair overlap the inner collar, preserving skin tone.
+  c.save();c.beginPath();c.rect(-24,actorRig.head.top,48,headCut-actorRig.head.top);c.clip();full();c.restore();
+  // Only original skin crosses this seam; base-shirt shoulders must not survive
+  // as gray wedges behind the new collar.
+  c.save();c.beginPath();c.rect(-24,headCut,48,anatomy.neck.y+.25-headCut);c.clip();full(handLayer(base,model,direction));c.restore();
  }else{
   c.save();if(worn.shoes){c.beginPath();c.rect(-24,actorRig.head.top,48,anatomy.cuffY-actorRig.head.top);c.clip();}full();c.restore();
  }

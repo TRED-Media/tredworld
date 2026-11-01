@@ -22,6 +22,8 @@ Kiểm tra upstream nghiêm ngặt hiện báo **0/16 master đạt**: nguồn c
 
 Profile `legacy-reference` chỉ áp dụng cho đúng hash nguồn đã lưu. Thay ảnh hoặc thêm ảnh mới phải dùng profile `strict`; ngoại lệ không tự đi theo ảnh thay thế.
 
+Đợt sửa bàn làm việc/trang phục ngày 2026-11-01 bổ sung `chairs-rear.png`: năm ghế nhìn từ sau, 33 màu trong palette khóa 36 màu, alpha nhị phân và không pixel lẻ. Đây là một asset **strict** mới; 16 master gốc giữ nguyên hash và nợ chất lượng đã báo ở trên. Bản sinh gốc cùng cấu hình xuất nằm trong `art-source/`; không lấy ảnh preview làm master. Điểm cổ/gấu áo và mặt tiếp xúc bàn được mô tả trong ART_PIPELINE.md. Bằng chứng mới: `work/quality-restoration/workstation-wearable-v1/verification-final/`.
+
 ## Kiểm tra và chuẩn hóa
 
 ```sh

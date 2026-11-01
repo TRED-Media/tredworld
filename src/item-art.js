@@ -1,6 +1,6 @@
 import {drawSprite,drawFrame} from './sprite-fit.js';
 import {FrameCache,visualKey} from './asset-rules.js';
-import {itemSource,artRevision,loadArt} from './art-assets.js';
+import {itemSource,stationSource,artRevision,loadArt} from './art-assets.js';
 import {workstationLayout} from './workstation-layout.js';
 const cache=new FrameCache(320);
 const office=loadArt('office-atlas');
@@ -37,11 +37,11 @@ export function drawItem(ctx,item,x=0,y=0,size=64,time=0,aura=true,badge=true){
 }
 export function itemImage(item){const key=[artRevision(),item.id,visualKey(item)].join(':');if(cache.has(key))return cache.get(key);const c=document.createElement('canvas');c.width=c.height=256;drawItem(c.getContext('2d'),item,0,0,256);const url=c.toDataURL();cache.set(key,url);return url;}
 export function workstationParts(user,items){
- return workstationLayout({...user,equipment:{monitor:'monitor-0-0',...user?.equipment}},items);
+ return workstationLayout({...user,equipment:{monitor:'monitor-0-0',...user?.equipment}},items,stationSource);
 }
 export function drawStationPart(ctx,part,x,y,w=96,time=0){
  ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(w/96,w/96);ctx.imageSmoothingEnabled=false;
- const source=itemSource(part.item);
+ const source=stationSource(part.item,part.slot);
  if(source)drawFrame(ctx,source,part.x,part.y,part.w,part.h,1);
  else drawItem(ctx,part.item,part.x,part.y,Math.min(part.w,part.h),time,false,false);
  ctx.restore();

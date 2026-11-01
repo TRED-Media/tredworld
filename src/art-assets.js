@@ -88,7 +88,9 @@ export function itemSource(item) {
  if (row >= 0) {
   const v = item.variant % 5;
   const xs = row === 10 ? [accessoryCuts[0],accessoryCuts[2],accessoryCuts[3],accessoryCuts[4],accessoryCuts[5],accessoryCuts[6]] : columnCuts;
-  return spriteFrame(image,xs[v]*image.naturalWidth/1060,rowCuts[row]*image.naturalHeight/1484,(xs[v+1]-xs[v])*image.naturalWidth/1060,(rowCuts[row+1]-rowCuts[row])*image.naturalHeight/1484);
+  // Each decoration is one physical object. Drop detached strokes belonging
+  // to the next atlas row (notably the tablet line below the rug).
+  return spriteFrame(image,xs[v]*image.naturalWidth/1060,rowCuts[row]*image.naturalHeight/1484,(xs[v+1]-xs[v])*image.naturalWidth/1060,(rowCuts[row+1]-rowCuts[row])*image.naturalHeight/1484,item.category==='decor');
  }
  const rule=atlasRules[`${item.category}-atlas`];
  if(!rule)return null;
@@ -101,5 +103,17 @@ export function itemSource(item) {
 
 }
 
+// Shop thumbnails retain the original front view; the chair at a desk faces away.
+export function stationSource(item,slot=item.category){
+ if(slot==='chair'){
+  if(item.art?.rear)return customSource(item.art.rear);
+  if(item.art)throw Error('Custom chair artwork needs an art.rear view facing its desk');
+  const image=loadArt('chairs-rear');
+  if(image.complete&&image.naturalWidth)return spriteFrame(image,item.variant%5*128,0,128,192);
+  return null;
+ }
+ return itemSource(item);
+}
+
 // Preload all shop art, including assets for categories not on the first page.
-for (const name of ['items-atlas','pet-atlas','vehicle-atlas','office-atlas','characters-cardinal','wear-hat','wear-shirt','wear-shoes','wear-glasses','furniture-straight']) loadArt(name);
+for (const name of ['items-atlas','pet-atlas','vehicle-atlas','office-atlas','characters-cardinal','wear-hat','wear-shirt','wear-shoes','wear-glasses','furniture-straight','chairs-rear']) loadArt(name);

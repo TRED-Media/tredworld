@@ -2,10 +2,10 @@ import {mountVehiclePreview} from './vehicle-preview.js';
 import {configureCanvas,displayRatio} from './render-quality.js';
 import {api} from './api.js';
 import {categories,rarities,levelInfo} from '../shared/catalog.js';
-import {itemImage,drawItem,drawWorkstation} from './item-art.js';
+import {itemImage,drawItem,drawWorkstation,workstationParts} from './item-art.js';
 import './economy.css';
 import {drawCharacter,drawRider,wardrobeSlots} from './character-art.js';
-import {workstationLayout,stationPosition,workstationSlots} from './workstation-layout.js';
+import {stationPosition,workstationSlots} from './workstation-layout.js';
 import {avatarImage,icon,workstationScene} from './visuals.js';
 /** @type {any} */ export const game={state:null,world:[],aura:localStorage.getItem('tred-aura')!=='off',animation:'idle'};
 const cloudMode=import.meta.env.VITE_GAME_TRANSPORT==='poll';
@@ -74,7 +74,7 @@ export function workspace(id){
  const c=$('#setup'),ctx=c.getContext('2d'),formElement=$('#workstation');let selected=available[0],drag=null;
  function selectItem(item){
   selected=item;draft.equipment[item.slot]=item.id;
-  const part=workstationLayout(draft,s.catalog).find(p=>p.slot===item.slot),position=draft.layout[item.slot]||stationPosition(item.slot,part.x,part.y);
+  const part=workstationParts(draft,s.catalog).find(p=>p.slot===item.slot),position=part.position;
   formElement.elements.itemId.value=item.id;formElement.elements.x.value=position.x;formElement.elements.y.value=position.y;
  }
  function updatePosition(){if(!selected)return;draft.layout[selected.slot]={x:Number(formElement.elements.x.value),y:Number(formElement.elements.y.value)};}
@@ -83,17 +83,17 @@ export function workspace(id){
   formElement.elements.x.oninput=updatePosition;formElement.elements.y.oninput=updatePosition;
   const point=e=>{const bounds=c.getBoundingClientRect();return {x:((e.clientX-bounds.left)*480/bounds.width-160)/ (160/96),y:((e.clientY-bounds.top)*300/bounds.height-72)/(160/96)};};
   c.onpointerdown=e=>{
-   const p=point(e),parts=workstationLayout(draft,s.catalog),part=[...parts].reverse().find(r=>p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h);
+   const p=point(e),parts=workstationParts(draft,s.catalog),part=[...parts].reverse().find(r=>p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h);
    if(!part)return;const item=available.find(i=>i.id===part.item.id);if(!item)return;selectItem(item);drag={x:p.x-part.x,y:p.y-part.y};c.setPointerCapture(e.pointerId);
   };
-  c.onpointermove=e=>{if(!drag)return;const p=point(e),position=stationPosition(selected.slot,p.x-drag.x,p.y-drag.y);draft.layout[selected.slot]=position;formElement.elements.x.value=position.x;formElement.elements.y.value=position.y;};
+  c.onpointermove=e=>{if(!drag)return;const p=point(e),position=stationPosition(selected.slot,p.x-drag.x,p.y-drag.y,workstationParts(draft,s.catalog));draft.layout[selected.slot]=position;formElement.elements.x.value=position.x;formElement.elements.y.value=position.y;};
   c.onpointerup=c.onpointercancel=()=>{drag=null;};
  }
  const paint=t=>{
   if(!c.isConnected)return;
   configureCanvas(c,480,300,{ratio:displayRatio()*c.getBoundingClientRect().width/480});
   workstationScene(ctx,draft,s.catalog,t,game.aura,drawWorkstation);
-  if(formElement&&selected){const part=workstationLayout(draft,s.catalog).find(p=>p.slot===selected.slot);ctx.strokeStyle='#f1cd8f';ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.strokeRect(160+part.x*160/96,72+part.y*160/96,part.w*160/96,part.h*160/96);ctx.setLineDash([]);}
+  if(formElement&&selected){const part=workstationParts(draft,s.catalog).find(p=>p.slot===selected.slot);ctx.strokeStyle='#f1cd8f';ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.strokeRect(160+part.x*160/96,72+part.y*160/96,part.w*160/96,part.h*160/96);ctx.setLineDash([]);}
   requestAnimationFrame(paint);
  };requestAnimationFrame(paint);
 document.querySelectorAll('[data-setup-group]').forEach(b=>b.onclick=()=>{setupGroup=b.dataset.setupGroup;setupPart=setupGroups[setupGroup].parts[0][0];workspace(id);});document.querySelectorAll('[data-setup-part]').forEach(b=>b.onclick=()=>{setupPart=b.dataset.setupPart;workspace(id);});document.querySelectorAll('[data-setup-item]').forEach(b=>b.onclick=()=>guarded(async()=>{const item=s.catalog.find(i=>i.id===b.dataset.setupItem);if(!s.me.inventory.includes(item.id))await action('purchase',{itemId:item.id});else await action('equip',{itemId:item.id});notify('Đã cập nhật bàn làm việc chung');workspace(id);}));

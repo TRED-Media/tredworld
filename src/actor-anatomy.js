@@ -24,6 +24,17 @@ export function actorAnatomy(model,direction){
  const measuredFace=bounds(0,.5,true),frontal=direction===0?null:actorAnatomy(model,0);
  const face=measuredFace||{x:head.x+head.w*.15,y:head.y+head.h*.4,w:head.w*.7,h:head.h*.6};
  const feet=bounds(.93,1)||{x:-9,y:-5,w:18,h:5};
- const value={head,face,frontalFace:frontal?.face||face,feet,cuffY:feet.y-attachmentFit.shoes.cuffOverlap};
+ // Locate the actual neck instead of cutting every model at a shared screen row.
+ let neck=null;
+ for(let y=Math.floor(frame.sh*.38);y<Math.floor(frame.sh*.52);y++){
+  let left=frame.sw,right=-1;
+  for(let x=Math.floor(frame.sw*.35);x<Math.ceil(frame.sw*.65);x++){
+   const n=(y*frame.sw+x)*4,[R,G,B,A]=pixels.slice(n,n+4);
+   if(A>128&&R>G*1.12&&G>B*1.08&&R>140){left=Math.min(left,x);right=Math.max(right,x);}
+  }
+  if(right>=left)neck={x:fit.x+(left+right+1)/2*scale,y:fit.y+(y+1)*scale};
+ }
+ neck||={x:fit.x+fit.w/2,y:actorRig.head.bottom};
+ const value={head,face,frontalFace:frontal?.face||face,neck,waistY:fit.y+fit.h*.66,feet,cuffY:feet.y-attachmentFit.shoes.cuffOverlap};
  cache.set(key,value);return value;
 }

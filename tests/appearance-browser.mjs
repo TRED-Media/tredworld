@@ -32,7 +32,7 @@ try {
   const {catalog}=await import('/shared/catalog.js');
   await Promise.all(['characters-cardinal','wearables-cardinal','furniture-straight'].map(name=>loadArt(name).decode()));
   const ids=['hai','tuyen'];
-  const failures=[],mirrorFailures=[],feetFailures=[],proportionFailures=[],cuffFailures=[];let count=0;
+  const failures=[],mirrorFailures=[],feetFailures=[],proportionFailures=[],cuffFailures=[],armFailures=[];let count=0;
   const gallery=document.createElement('canvas');gallery.width=720;gallery.height=850;
   const gc=gallery.getContext('2d');gc.fillStyle='#677783';gc.fillRect(0,0,720,850);
   for(const id of ids)for(let variant=0;variant<5;variant++)for(const moving of [false,true]){
@@ -54,6 +54,14 @@ try {
     const equipment={...user.equipment};delete equipment.shoes;
     drawCharacter(bare.getContext('2d'),{...user,equipment},catalog,32,40,{direction,moving,frame:8,pet:false,aura:false});
     const reference=bare.getContext('2d').getImageData(0,0,64,80).data;
+    const skin=document.createElement('canvas');skin.width=64;skin.height=80;
+    const underlay={...user.equipment};delete underlay.shirt;
+    drawCharacter(skin.getContext('2d'),{...user,equipment:underlay},catalog,32,40,{direction,moving,frame:8,pet:false,aura:false});
+    const original=skin.getContext('2d').getImageData(0,0,64,80).data;
+    for(let y=35;y<46;y++)for(let x=16;x<49;x++){
+     const n=(y*64+x)*4,[r,g,b,a]=original.slice(n,n+4);
+     if(a>200&&r>g*1.13&&g>b*1.08&&r>140&&pixels[n+3]<40)armFailures.push({id,variant,direction,moving,x,y});
+    }
     for(let y=Math.floor(61+anatomy.cuffY-4);y<Math.floor(61+anatomy.cuffY-1);y++)for(let x=20;x<45;x++){
      const n=(y*64+x)*4;if(pixels.slice(n,n+4).some((v,i)=>v!==reference[n+i]))cuffFailures.push({id,variant,direction,moving,x,y});
     }
@@ -71,7 +79,7 @@ try {
    if(views[2].every((value,index)=>value===views[3][index]))mirrorFailures.push({id,variant,moving});
 
   }
-  return {count,failures,mirrorFailures,feetFailures,proportionFailures,cuffFailures,gallery:gallery.toDataURL().split(',')[1]};
+  return {count,failures,mirrorFailures,feetFailures,proportionFailures,cuffFailures,armFailures,gallery:gallery.toDataURL().split(',')[1]};
  });
  writeFileSync('work/screenshots/appearance-directions.png',Buffer.from(audit.gallery,'base64'));
  assert.equal(audit.count,80);
@@ -80,7 +88,31 @@ try {
  assert.deepEqual(audit.mirrorFailures,[],'left and right must have distinct cardinal drawings');
  assert.deepEqual(audit.proportionFailures,[],'accessories must fit the measured skull and face');
  assert.deepEqual(audit.cuffFailures,[],'wearing shoes must not repaint the trouser cuffs');
+ assert.deepEqual(audit.armFailures,[],'original forearms must stay continuous below every sleeve');
  console.log(`PASS ${audit.count} character/outfit/direction/animation combinations: necks, feet, anatomy-sized accessories and unchanged trouser cuffs`);
+
+ const workstationAudit=await page.evaluate(async()=>{
+  const {catalog}=await import('/shared/catalog.js'),{loadArt,stationSource}=await import('/src/art-assets.js');
+  const {drawWorkstation,workstationParts}=await import('/src/item-art.js');
+  await Promise.all(['furniture-straight','items-atlas','chairs-rear'].map(n=>loadArt(n).decode()));
+  const c=document.createElement('canvas');c.width=1600;c.height=1800;const ctx=c.getContext('2d');ctx.fillStyle='#677783';ctx.fillRect(0,0,c.width,c.height);
+  const failures=[];let count=0;
+  for(let desk=0;desk<5;desk++)for(let style=0;style<5;style++){
+   const user={equipment:Object.fromEntries(['desk','chair','case','monitor','cooling','accessory','decor'].map(slot=>[slot,catalog.find(i=>i.active&&i.category===slot&&i.variant===(slot==='desk'?desk:style)).id]))};
+   const parts=workstationParts(user,catalog),surface=parts.find(p=>p.slot==='desk').surface;
+   for(const slot of ['case','monitor','accessory']){
+    const p=parts.find(p=>p.slot===slot),foot=Math.round(p.y)+p.h;
+    if(foot<surface.back-.6||foot>surface.front+.6||p.x<surface.left-.6||p.x+p.w>surface.right+.6)failures.push({desk,style,slot,p,surface});
+   }
+   const chair=parts.find(p=>p.slot==='chair');if(chair.view!=='back'||!stationSource(chair.item).image)failures.push({desk,style,slot:'chair'});
+   ctx.fillStyle='#eef0e5';ctx.font='14px sans-serif';ctx.fillText(`Desk ${desk+1} / setup ${style+1}`,style*320+12,desk*360+20);
+   drawWorkstation(ctx,user,catalog,style*320+28,desk*360+35,260,false,0);count++;
+  }
+  return {count,failures,gallery:c.toDataURL().split(',')[1]};
+ });
+ writeFileSync('work/screenshots/workstation-all-styles.png',Buffer.from(workstationAudit.gallery,'base64'));
+ assert.deepEqual(workstationAudit.failures,[],'all workstation feet must meet the real desk surface');
+ console.log(`PASS ${workstationAudit.count} native-art workstation combinations: table contact plane, constrained hardware and rear-facing chairs`);
 
  const system=await page.evaluate(async()=>{
   const {drawCharacter,drawRider}=await import('/src/character-art.js');

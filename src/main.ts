@@ -33,7 +33,7 @@ function nameplate(label:{name:string,x:number,y:number,secondary?:boolean}){
 function plant(c:CanvasRenderingContext2D,x:number,y:number,s=1){if(drawOfficeProp(c,2,x-16*s,y-48*s,32*s,66*s))return;c.save();c.translate(x,y);c.scale(s,s);rect(c,-10,4,20,18,'#444e59');rect(c,-8,3,16,15,'#e0ded4');rect(c,-6,14,12,3,'#b0b5b1');rect(c,-2,-22,4,28,'#596b39');for(let i=0;i<8;i++){const a=i*2.4;rect(c,Math.sin(a)*10-5,-8-i*3,10,10,i%2?'#527a43':'#779854');rect(c,Math.sin(a)*10-3,-8-i*3,3,6,'#9db268');}c.restore()}
 function workingPerson(d:any,user:any){
  const x=d.seat.x,y=d.seat.y+11;
- drawCharacter(ctx,user,game.state?.catalog||[],x,y-4,{direction:1,frame,pet:false,aura:game.aura,pose:'sit'});
+ drawCharacter(ctx,user,game.state?.catalog||[],x,y-11,{direction:1,frame,pet:false,aura:game.aura,pose:'sit'});
  // Retain the existing chair, screen activity and working animation.
  if(!user.equipment?.chair){rect(ctx,x-13,y+4,26,18,'#303d50');rect(ctx,x-11,y+6,22,11,'#53617a');}
  rect(ctx,d.x+28,d.y-10,34,16,frame%60<30?'#7eafc350':'#aecbdf55');
