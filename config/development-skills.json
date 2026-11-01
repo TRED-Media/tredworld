@@ -1,0 +1,355 @@
+{
+  "version": 1,
+  "engine": "canvas-2d",
+  "orchestrator": "tred-development",
+  "defaultSkill": "develop-web-game",
+  "skills": [
+    {
+      "id": "tred-development",
+      "path": ".agents/skills/tred-development/SKILL.md",
+      "scope": "orchestration",
+      "permissions": {
+        "network": [],
+        "credentials": [],
+        "write": "task-scoped source and ignored work/"
+      }
+    },
+    {
+      "id": "tred-game-ui",
+      "path": ".agents/skills/tred-game-ui/SKILL.md",
+      "scope": "ui",
+      "keywords": [
+        "ui",
+        "ux",
+        "responsive",
+        "mobile",
+        "giao dien",
+        "nut",
+        "menu",
+        "hud",
+        "font",
+        "chu",
+        "safe area",
+        "focus"
+      ],
+      "files": [
+        ".css",
+        "src/economy-ui.js",
+        "src/visuals.js"
+      ],
+      "supports": [
+        "web-design-guidelines"
+      ],
+      "checks": [
+        "npm test",
+        "npm run test:graphics",
+        "npm run test:visual"
+      ],
+      "permissions": {
+        "network": [],
+        "credentials": [],
+        "write": "task-scoped DOM/CSS and tests"
+      }
+    },
+    {
+      "id": "tred-asset-quality",
+      "path": ".agents/skills/tred-asset-quality/SKILL.md",
+      "scope": "assets",
+      "keywords": [
+        "asset",
+        "pixel",
+        "sprite",
+        "trang phuc",
+        "mu",
+        "kinh",
+        "giay",
+        "ao",
+        "item",
+        "atlas",
+        "do net"
+      ],
+      "files": [
+        "public/art/",
+        "src/art-assets.js",
+        "src/sprite-fit.js",
+        "src/actor-anatomy.js",
+        "src/item-art.js"
+      ],
+      "supports": [
+        "sprite-pipeline"
+      ],
+      "checks": [
+        "npm run assets:check",
+        "npm run test:pipeline",
+        "npm run test:assets",
+        "npm run test:visual"
+      ],
+      "permissions": {
+        "network": [],
+        "credentials": [],
+        "write": "reviewed task-scoped assets; candidates under work/"
+      }
+    },
+    {
+      "id": "tred-animation",
+      "path": ".agents/skills/tred-animation/SKILL.md",
+      "scope": "animation",
+      "keywords": [
+        "rider",
+        "vehicle",
+        "animation",
+        "tu the",
+        "lai xe",
+        "ngoi xe",
+        "huong nhin",
+        "hoat anh",
+        "chong lop",
+        "anchor",
+        "xe may",
+        "mo to",
+        "oto",
+        "o to"
+      ],
+      "files": [
+        "src/vehicle-rig.js",
+        "src/character-art.js",
+        "src/rider.js",
+        "src/vehicle-preview.js"
+      ],
+      "supports": [
+        "tred-asset-quality",
+        "sprite-pipeline"
+      ],
+      "checks": [
+        "npm test",
+        "npm run assets:check",
+        "npm run test:assets",
+        "npm run test:visual"
+      ],
+      "permissions": {
+        "network": [],
+        "credentials": [],
+        "write": "task-scoped Canvas rigs and previews"
+      }
+    },
+    {
+      "id": "tred-gameplay",
+      "path": ".agents/skills/tred-gameplay/SKILL.md",
+      "scope": "gameplay",
+      "keywords": [
+        "movement",
+        "camera",
+        "collision",
+        "interaction",
+        "di chuyen",
+        "va cham",
+        "tuong tac",
+        "zoom",
+        "joystick",
+        "wasd",
+        "dieu khien"
+      ],
+      "files": [
+        "src/world.js",
+        "src/presence-motion.js",
+        "src/render-quality.js",
+        "src/main.ts"
+      ],
+      "supports": [
+        "develop-web-game"
+      ],
+      "checks": [
+        "npm test",
+        "npm run test:browser",
+        "npm run test:graphics",
+        "npm run test:visual"
+      ],
+      "permissions": {
+        "network": [
+          "loopback fixture only"
+        ],
+        "credentials": [],
+        "write": "task-scoped input/camera/collision and tests"
+      }
+    },
+    {
+      "id": "tred-performance",
+      "path": ".agents/skills/tred-performance/SKILL.md",
+      "scope": "performance",
+      "keywords": [
+        "performance",
+        "fps",
+        "memory",
+        "cache",
+        "toi uu",
+        "hieu nang",
+        "lag",
+        "giat",
+        "bo nho",
+        "bundle"
+      ],
+      "files": [],
+      "supports": [
+        "develop-web-game"
+      ],
+      "checks": [
+        "npm run build",
+        "npm run test:assets",
+        "npm run test:visual"
+      ],
+      "permissions": {
+        "network": [
+          "loopback fixture only"
+        ],
+        "credentials": [],
+        "write": "measured task-scoped performance changes"
+      }
+    },
+    {
+      "id": "tred-visual-testing",
+      "path": ".agents/skills/tred-visual-testing/SKILL.md",
+      "scope": "testing",
+      "keywords": [
+        "test",
+        "testing",
+        "kiem thu",
+        "regression",
+        "hoi quy",
+        "baseline",
+        "kiem tra",
+        "screenshot",
+        "preview"
+      ],
+      "files": [
+        "tests/",
+        "scripts/visual-",
+        "scripts/dev-checkpoint"
+      ],
+      "supports": [
+        "develop-web-game"
+      ],
+      "checks": [
+        "npm test",
+        "npm run test:visual"
+      ],
+      "permissions": {
+        "network": [
+          "loopback fixture only"
+        ],
+        "credentials": [],
+        "write": "tests and immutable work/ evidence"
+      }
+    },
+    {
+      "id": "develop-web-game",
+      "path": ".agents/skills/develop-web-game/SKILL.md",
+      "scope": "general",
+      "keywords": [],
+      "files": [],
+      "supports": [],
+      "checks": [
+        "npm test",
+        "npm run build",
+        "npm run test:browser"
+      ],
+      "permissions": {
+        "network": [
+          "loopback fixture only"
+        ],
+        "credentials": [],
+        "write": "task-scoped source and tests"
+      }
+    },
+    {
+      "id": "web-design-guidelines",
+      "path": ".agents/skills/web-design-guidelines/SKILL.md",
+      "scope": "ui-review",
+      "permissions": {
+        "network": [],
+        "credentials": [],
+        "write": "review evidence only"
+      }
+    },
+    {
+      "id": "game-asset-gen",
+      "path": ".agents/skills/game-asset-gen/SKILL.md",
+      "scope": "generation",
+      "permissions": {
+        "network": [
+          "provided image generation tool only when requested"
+        ],
+        "credentials": [],
+        "write": "new work/ candidates"
+      },
+      "supports": [
+        "tred-asset-quality",
+        "sprite-pipeline"
+      ]
+    },
+    {
+      "id": "sprite-pipeline",
+      "path": ".agents/skills/sprite-pipeline/SKILL.md",
+      "scope": "normalization",
+      "permissions": {
+        "network": [],
+        "credentials": [],
+        "write": "new work/ candidates"
+      }
+    },
+    {
+      "id": "tred-deployment",
+      "path": ".agents/skills/tred-deployment/SKILL.md",
+      "scope": "deployment",
+      "keywords": [
+        "deploy",
+        "publish",
+        "phat hanh",
+        "trien khai",
+        "vercel"
+      ],
+      "files": [
+        "vercel.json",
+        "api/",
+        "deployment/"
+      ],
+      "supports": [],
+      "checks": [
+        "npm run build",
+        "npm run test:browser",
+        "npm run test:assets",
+        "npm run test:visual"
+      ],
+      "permissions": {
+        "network": [
+          "explicitly authorized connected deployment project"
+        ],
+        "credentials": [
+          "existing connector binding only"
+        ],
+        "write": "only user-authorized deployment scope"
+      }
+    }
+  ],
+  "deferred": [
+    {
+      "id": "phaser",
+      "reason": "No Phaser dependency or scene lifecycle; requires a separately reviewed engine migration"
+    },
+    {
+      "id": "spine-animation",
+      "reason": "No Spine loader/skeleton/runtime; requires integration, pixel sampling and runtime-license design checkpoint"
+    },
+    {
+      "id": "vercel-react-best-practices",
+      "reason": "No React/Next/TSX in this Canvas/DOM frontend"
+    }
+  ],
+  "visual": {
+    "maxChangedRatio": 0,
+    "channelTolerance": 0,
+    "maxJsGzipBytes": 51200,
+    "maxCssGzipBytes": 12288,
+    "uiChannelTolerance": 1,
+    "maxUiNoisePixels": 16
+  }
+}

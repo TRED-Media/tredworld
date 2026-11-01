@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": "game-ui-ux",
+      "url": "https://github.com/gamedev-skills/awesome-gamedev-agent-skills/tree/19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9/skills/disciplines/game-ui-ux",
+      "commit": "19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9",
+      "sha256": "54816447c4d07f9ab65782ebb7138dd0927c9cd84a3647e8806f2a86a3a094ff",
+      "decision": "adapted",
+      "review": "Markdown only; Godot/Unity samples excluded"
+    },
+    {
+      "id": "develop-web-game",
+      "url": "https://github.com/openai/skills/tree/30444aed500c00c85294d12074f6e3ee794f808a/skills/.curated/develop-web-game",
+      "commit": "30444aed500c00c85294d12074f6e3ee794f808a",
+      "sha256": "4586330e97c99581f37798c179a71c62030fc20befa6de3e3ccb96d1adead9c7",
+      "decision": "adapted",
+      "review": "Local browser script reviewed; no production timer shim; curated main path removed"
+    },
+    {
+      "id": "game-asset-gen",
+      "url": "https://github.com/haxqer/skills/tree/3fd9ba1a2fa0dac5711af0ad8c1e5bfa7a819e2c/skills/game-asset-gen",
+      "commit": "3fd9ba1a2fa0dac5711af0ad8c1e5bfa7a819e2c",
+      "sha256": "1eb8d3f4e354bfd044fecab955ebfc21b2ce73e7f52bc383571492d8799b382b",
+      "decision": "adapted-no-cli",
+      "review": "Generator env discovery / uploads / custom gateway / file outputs are not installed"
+    },
+    {
+      "id": "phaser",
+      "url": "https://github.com/haxqer/skills/tree/3fd9ba1a2fa0dac5711af0ad8c1e5bfa7a819e2c/skills/phaser",
+      "commit": "3fd9ba1a2fa0dac5711af0ad8c1e5bfa7a819e2c",
+      "sha256": "6b28d7acd3b34677cb9e28f3f66d007f345fcae9e8d1c2351df9f7df46e53b8d",
+      "decision": "deferred",
+      "review": "Requires incompatible Phaser runtime/scene lifecycle"
+    },
+    {
+      "id": "spine-animation",
+      "url": "https://github.com/haxqer/skills/tree/3fd9ba1a2fa0dac5711af0ad8c1e5bfa7a819e2c/skills/spine-animation",
+      "commit": "3fd9ba1a2fa0dac5711af0ad8c1e5bfa7a819e2c",
+      "sha256": "6a8510f4cce6a0cfd9f9e7c8572737139b5349dba58b659b5bf754da350e0b22",
+      "decision": "deferred",
+      "review": "Preview downloads CDN runtime and caches outside repo; new dependencies/runtime and license review required"
+    },
+    {
+      "id": "web-design-guidelines",
+      "url": "https://github.com/vercel-labs/agent-skills/tree/1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62/skills/web-design-guidelines",
+      "commit": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "sha256": "f4647ca866a3accf763777f83e7682954f0187cd6bea7eea0399796652414e8f",
+      "decision": "adapted-pinned",
+      "review": "Moving rules fetch excluded; reviewed rules are pinned to a commit"
+    },
+    {
+      "id": "web-interface-rules",
+      "url": "https://github.com/vercel-labs/web-interface-guidelines/blob/434b7f91364665f2f733b310ec54809bf8f37937/command.md",
+      "commit": "434b7f91364665f2f733b310ec54809bf8f37937",
+      "sha256": "d246b026f4f29b5823a9cc857f9edf3d2507002e055e32040cadeaf3b38e0234",
+      "decision": "reference",
+      "review": "Read-only UI review; no remote code execution"
+    },
+    {
+      "id": "gen-script",
+      "sha256": "98135c1a9da4221ee408311c142583e8d89c32f21d9a155ac84205c3b6e59a5a",
+      "decision": "reviewed-not-installed",
+      "lines": 840,
+      "commit": "3fd9ba1a2fa0dac5711af0ad8c1e5bfa7a819e2c",
+      "url": "https://github.com/haxqer/skills/blob/3fd9ba1a2fa0dac5711af0ad8c1e5bfa7a819e2c/skills/game-asset-gen/scripts/generate_asset.py"
+    },
+    {
+      "id": "spine-script",
+      "sha256": "3b7cc23146cd15c25964e12f260fe338bfb9769f6171a09f360576c5bfe1b5f8",
+      "decision": "reviewed-not-installed",
+      "lines": 416,
+      "commit": "3fd9ba1a2fa0dac5711af0ad8c1e5bfa7a819e2c",
+      "url": "https://github.com/haxqer/skills/blob/3fd9ba1a2fa0dac5711af0ad8c1e5bfa7a819e2c/skills/spine-animation/scripts/generate_spine_player.py"
+    },
+    {
+      "id": "openai-game-script",
+      "sha256": "e95c3bcbdc0d15eb08fd3a6021283ec32f715b51f1e5847d3db20df526be5996",
+      "decision": "reviewed-not-installed",
+      "lines": 357,
+      "commit": "30444aed500c00c85294d12074f6e3ee794f808a",
+      "url": "https://github.com/openai/skills/blob/30444aed500c00c85294d12074f6e3ee794f808a/skills/.curated/develop-web-game/scripts/web_game_playwright_client.js"
+    },
+    {
+      "id": "openai-game-playtest",
+      "url": "https://github.com/openai/plugins/blob/0722921d5542fc593105c27bd52630babd8b8c2a/plugins/game-studio/skills/game-playtest/SKILL.md",
+      "commit": "0722921d5542fc593105c27bd52630babd8b8c2a",
+      "sha256": "413f2453c602678962fab62446144f2929fcd5b9239f209c7889cc592d2b5be8",
+      "decision": "reference",
+      "review": "Read-only playtest workflow; reuse installed browser tools"
+    }
+  ],
+  "installedRemoteScripts": [],
+  "automaticInstall": false,
+  "credentialsDiscovered": false
+}

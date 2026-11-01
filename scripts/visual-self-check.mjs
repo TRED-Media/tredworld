@@ -1,0 +1,11 @@
+import {execFileSync} from 'node:child_process';
+import {resolve} from 'node:path';
+import {evidenceId} from './dev-evidence.mjs';
+import {compareCaptures,checkReport} from './visual-evidence.mjs';
+import {registry} from './skill-router.mjs';
+const base='work/visual-self-check/'+evidenceId();
+for(const stage of ['before','after'])execFileSync(process.execPath,['tests/visual-capture.mjs','--output',base+'/'+stage],{stdio:'inherit'});
+const report=compareCaptures(process.cwd(),base+'/before',base+'/after',base+'/comparison',registry.visual);
+if(report.status!=='unchanged')throw new Error('Unchanged source capture is not deterministic: '+report.status+'; inspect '+report.directory);
+console.log(JSON.stringify(checkReport(process.cwd(),resolve(report.directory,'comparison.json'))));
+console.log('This checks capture stability; a real release still needs its pre-change checkpoint comparison.');

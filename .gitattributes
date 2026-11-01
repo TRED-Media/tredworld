@@ -1,0 +1,6 @@
+# Keep reviewed skill/tool hashes stable across developer checkouts.
+.agents/skills/**/*.md text eol=lf
+.agents/skills/**/*.py text eol=lf
+config/*.json text eol=lf
+scripts/*.mjs text eol=lf
+scripts/*.py text eol=lf

@@ -5,15 +5,17 @@ import {mkdtempSync,mkdirSync,rmSync,writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {createGameServer} from '../server/index.js';
+import {fixtureViteConfig,isolateBrowser} from './fixture-policy.mjs';
 
 const dir=mkdtempSync(join(tmpdir(),'tred-appearance-'));
 const {server,streams,engine}=createGameServer({dbPath:join(dir,'test.sqlite')});
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-const vite=await createServer({configFile:false,server:{host:'127.0.0.1',port:0,proxy:{'/api':{target:`http://127.0.0.1:${server.address().port}`,changeOrigin:false}}}});
+const vite=await createServer(fixtureViteConfig(`http://127.0.0.1:${server.address().port}`));
 await vite.listen();
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
 const page=await browser.newPage({viewport:{width:390,height:844},hasTouch:true});
 const errors=[];
+await isolateBrowser(page.context(),vite.resolvedUrls.local[0],errors);
 page.on('pageerror',error=>errors.push(error.message));
 mkdirSync('work/screenshots',{recursive:true});
 try {

@@ -5,19 +5,21 @@ import {mkdtempSync,mkdirSync,rmSync,writeFileSync,readFileSync,existsSync} from
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import assert from 'node:assert/strict';
+import {fixtureViteConfig,isolateBrowser} from './fixture-policy.mjs';
 
 const label=process.argv.includes('--before')?'before':'after';
-const destination=existsSync('work/quality-restoration/current.txt')?readFileSync('work/quality-restoration/current.txt','utf8').trim():'work/quality-restoration/latest';
+const destination=process.env.TRED_GRAPHICS_OUTPUT||(existsSync('work/quality-restoration/current.txt')?readFileSync('work/quality-restoration/current.txt','utf8').trim():'work/quality-restoration/latest');
 mkdirSync(destination,{recursive:true});
 const temp=mkdtempSync(join(tmpdir(),'tred-graphics-'));
 const {server,streams}=createGameServer({dbPath:join(temp,'test.sqlite')});
 await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-const vite=await createServer({configFile:false,server:{host:'127.0.0.1',port:0,proxy:{'/api':{target:`http://127.0.0.1:${server.address().port}`,changeOrigin:false}}}});await vite.listen();
+const vite=await createServer(fixtureViteConfig(`http://127.0.0.1:${server.address().port}`));await vite.listen();
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
 const errors=[],metrics=[];
 try{
  for(const [name,width,height,dpr] of [['desktop',1440,1000,1],['retina',1440,1000,2],['mobile',390,844,3],['wide-mobile',430,932,2],['landscape',844,390,2]]){
   const context=await browser.newContext({viewport:{width,height},deviceScaleFactor:dpr,hasTouch:width<900});const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
+  await isolateBrowser(context,vite.resolvedUrls.local[0],errors);
   await page.goto(vite.resolvedUrls.local[0]);await page.locator('#login select').selectOption('admin');await page.locator('#login [name=password]').fill('admin');await page.locator('#login button').click();await page.locator('#modal').waitFor({state:'hidden'});
   await page.evaluate(async()=>{const {loadArt}=await import('/src/art-assets.js');await Promise.all(['characters-cardinal','wearables-cardinal','wear-shirt','wear-hat','wear-shoes','wear-glasses','vehicle-atlas','items-atlas','furniture-straight'].map(n=>loadArt(n).decode()));});
   await page.waitForTimeout(150);await page.screenshot({path:join(destination,`${label}-${name}-world.png`)});

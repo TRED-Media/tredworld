@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node server/dev.js",
-    "build": "npm run assets:check && tsc && vite build",
+    "build": "npm run skills:check && npm run assets:check && tsc && vite build",
     "test": "node --test tests/*.test.js",
     "start": "node server/index.js",
     "test:browser": "node tests/economy-browser.mjs",
@@ -15,7 +15,16 @@
     "assets:audit": "python scripts/sprite_pipeline.py audit",
     "assets:normalize": "python scripts/sprite_pipeline.py normalize",
     "test:pipeline": "python tests/sprite_pipeline_test.py",
-    "report:graphics": "node scripts/graphics-report.mjs"
+    "report:graphics": "node scripts/graphics-report.mjs",
+    "skills:route": "node scripts/skill-router.mjs",
+    "skills:check": "node scripts/check-development-skills.mjs",
+    "skills:verify": "node scripts/verify-development.mjs",
+    "dev:checkpoint": "node scripts/dev-checkpoint.mjs",
+    "visual:capture": "node tests/visual-capture.mjs",
+    "visual:compare": "node scripts/visual-regression.mjs compare",
+    "visual:review": "node scripts/visual-regression.mjs review",
+    "visual:check": "node scripts/visual-regression.mjs check",
+    "test:visual": "node scripts/visual-self-check.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.0",
