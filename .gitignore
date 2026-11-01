@@ -8,3 +8,5 @@ test-results/
 
 data/
 work/
+__pycache__/
+*.py[cod]

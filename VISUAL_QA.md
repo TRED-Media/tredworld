@@ -1,5 +1,13 @@
 # Visual release review
 
+## Graphics restoration and skill integration (2026-11-01)
+- Preserved all sixteen original PNG masters byte-for-byte and recorded dimensions, SHA-256 and source history. Restored all five authored garment styles in runtime rather than recoloring one generic sheet. Retained the two cardinal bases and complete vehicle/pet crops.
+- Fixed display-density canvas sizing, physical-pixel camera/zoom alignment and CSS-space touch mapping. Added screen-space owner/name text, direct high-resolution thumbnails/portraits and bounded native-detail composition caches. Updated UI typography, vector pixel icons, readable mobile catalog tiles and high-density fitting/workstation/map/vehicle previews.
+- Projected rider torsos toward each model's actual grips; removed standing trousers, kept head proportions, sampled authored sleeves, exposed short-sleeved forearms and attached one shoe to each foot. Vehicle/driver root, cabin masking and authoritative ride/park behavior remain shared.
+- Read/pinned both requested upstream skills and integrated them through AGENTS.md, local skills and build/audit/normalization scripts. New exports require strict alpha, locked palette, shared scale/origin, exact grid and anchor. Normalization tests verify exact seed lockback, asymmetric-limb position, candidate-only repairs and refusal to overwrite/clamp missing poses.
+- Source audit reports **0/16 legacy masters passing strict pixel-art rules**. These are preserved reference exceptions tied to their original hashes, not false strict passes. Replacement images must pass the strict gate. See ASSET_QUALITY.md for the actual scope and remaining source debt.
+- Inspected before/after actor and rider galleries plus desktop/mobile screenshots. Graphics checks cover five viewport/DPR configurations; asset checks cover 80 outfit cases, 301 items and 1,568 rider combinations. Gameplay, persistence, photo check-in, setup ownership and two-session movement checks passed. This is headless Chromium verification, not physical-phone testing.
+
 Reference: owner's item collection and palette boards (cream paper, slate navy, dusty coral, sage, denim, warm wood).
 
 ## Changes verified before publishing

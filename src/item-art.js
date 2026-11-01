@@ -35,7 +35,7 @@ export function drawItem(ctx,item,x=0,y=0,size=64,time=0,aura=true,badge=true){
  if(badge&&t>=2){const col=t>=4?'#edbb62':t===2?'#83c8ef':'#f4a6df';r(8,59,48,2,col);if(t===3)r(10,56,4+(Math.floor(time/200)%5)*8,2,col);}
  ctx.restore();
 }
-export function itemImage(item){const key=[artRevision(),item.id,visualKey(item)].join(':');if(cache.has(key))return cache.get(key);const c=document.createElement('canvas');c.width=c.height=64;drawItem(c.getContext('2d'),item);const url=c.toDataURL();cache.set(key,url);return url;}
+export function itemImage(item){const key=[artRevision(),item.id,visualKey(item)].join(':');if(cache.has(key))return cache.get(key);const c=document.createElement('canvas');c.width=c.height=256;drawItem(c.getContext('2d'),item,0,0,256);const url=c.toDataURL();cache.set(key,url);return url;}
 export function workstationParts(user,items){
  return workstationLayout({...user,equipment:{monitor:'monitor-0-0',...user?.equipment}},items);
 }

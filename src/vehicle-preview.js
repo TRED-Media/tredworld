@@ -1,4 +1,5 @@
 import {drawRider} from './character-art.js';
+import {configureCanvas} from './render-quality.js';
 
 export function mountVehiclePreview(root,user,catalog){
  const controls=document.createElement('div');controls.className='eco-toolbar';
@@ -22,6 +23,7 @@ export function mountVehiclePreview(root,user,catalog){
   if(time-last>=50){
    last=time;
    for(const {vehicle,ctx} of rows){
+    configureCanvas(ctx.canvas,640,190);
     ctx.fillStyle='#647681';ctx.fillRect(0,0,640,190);ctx.fillStyle='#f1e8d7';ctx.font='11px monospace';
     for(let direction=0;direction<4;direction++){
      ctx.fillText(['FRONT','BACK','LEFT','RIGHT'][direction],direction*160+60,15);

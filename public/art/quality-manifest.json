@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "reviewedAgainst": "19eddfc3237da52158b1bb5dd3b17da9fc99378b",
+  "policy": "Keep original PNG masters. Intentional replacements require native-resolution before/after review and an explicit manifest update. Never overwrite a source with a resized preview.",
+  "sources": [
+    {
+      "file": "characters-cardinal.png",
+      "width": 1774,
+      "height": 887,
+      "sha256": "26e3840e568b3047c42aed87759f8d9a9eaa2cfc8bc5eb797e3a02f2892e6a52",
+      "introducedIn": "ce5f0173a6e835d724e8f693d9715fb7bf4a0e92",
+      "role": "runtime",
+      "quality": "legacy-reference",
+      "legacySha256": "26e3840e568b3047c42aed87759f8d9a9eaa2cfc8bc5eb797e3a02f2892e6a52"
+    },
+    {
+      "file": "furniture-straight.png",
+      "width": 1983,
+      "height": 793,
+      "sha256": "4b31d2f05dcffaac92b2ac4091da1561f61a1baae128fd184b9c5b85672ab5dc",
+      "introducedIn": "ce5f0173a6e835d724e8f693d9715fb7bf4a0e92",
+      "role": "runtime",
+      "quality": "legacy-reference",
+      "legacySha256": "4b31d2f05dcffaac92b2ac4091da1561f61a1baae128fd184b9c5b85672ab5dc"
+    },
+    {
+      "file": "items-atlas.png",
+      "width": 1060,
+      "height": 1484,
+      "sha256": "1b678c72edb4081642677f14ff7d433225b52ef993567ace24d79c038a086f49",
+      "introducedIn": "cb08e604a8535a97e73bdd3d7f7ae49939e10286",
+      "role": "runtime",
+      "quality": "legacy-reference",
+      "legacySha256": "1b678c72edb4081642677f14ff7d433225b52ef993567ace24d79c038a086f49"
+    },
+    {
+      "file": "office-atlas.png",
+      "width": 1448,
+      "height": 1086,
+      "sha256": "15aa629e519bc0c4724327558c1d1c1572eb960b1f44e72bf81de10b16e0edd5",
+      "introducedIn": "cb08e604a8535a97e73bdd3d7f7ae49939e10286",
+      "role": "runtime",
+      "quality": "legacy-reference",
+      "legacySha256": "15aa629e519bc0c4724327558c1d1c1572eb960b1f44e72bf81de10b16e0edd5"
+    },
+    {
+      "file": "office-character.png",
+      "width": 1145,
+      "height": 1374,
+      "sha256": "e83e7cacbdade4c5c04543d0de4cb8c8648b1fea8fd4dc789557519282c6143f",
+      "introducedIn": "9f77f3f07b5b362d07a86480c4cda84f19819292",
+      "role": "preserved-reference",
+      "quality": "legacy-reference",
+      "legacySha256": "e83e7cacbdade4c5c04543d0de4cb8c8648b1fea8fd4dc789557519282c6143f"
+    },
+    {
+      "file": "office-empty-stations.png",
+      "width": 1448,
+      "height": 1086,
+      "sha256": "c4ede1137d0cb6b2c6d6cf6b6f8bee835ff7f4d201c182818eea08f074f35b09",
+      "introducedIn": "ce5f0173a6e835d724e8f693d9715fb7bf4a0e92",
+      "role": "runtime",
+      "quality": "legacy-reference",
+      "legacySha256": "c4ede1137d0cb6b2c6d6cf6b6f8bee835ff7f4d201c182818eea08f074f35b09"
+    },
+    {
+      "file": "office-scene.png",
+      "width": 1448,
+      "height": 1086,
+      "sha256": "0a62f45e6159e92d29214fcf61eca442e5c1258b03a7b163e6226926830d4967",
+      "introducedIn": "a6b5c90f03addc10ebdb0aab6b026779ad692b88",
+      "role": "preserved-reference",
+      "quality": "legacy-reference",
+      "legacySha256": "0a62f45e6159e92d29214fcf61eca442e5c1258b03a7b163e6226926830d4967"
+    },
+    {
+      "file": "pet-atlas.png",
+      "width": 1402,
+      "height": 1122,
+      "sha256": "2e1b49a88adf60041522bbbff55a7baca49a89f75878b03123c284c426aea869",
+      "introducedIn": "9f77f3f07b5b362d07a86480c4cda84f19819292",
+      "role": "runtime",
+      "quality": "legacy-reference",
+      "legacySha256": "2e1b49a88adf60041522bbbff55a7baca49a89f75878b03123c284c426aea869"
+    },
+    {
+      "file": "staff-roster.png",
+      "width": 2172,
+      "height": 724,
+      "sha256": "9679fded26eb910cd1e5ebf224033533292d371f898716934819cd20b1f9696a",
+      "introducedIn": "a6b5c90f03addc10ebdb0aab6b026779ad692b88",
+      "role": "preserved-reference",
+      "quality": "legacy-reference",
+      "legacySha256": "9679fded26eb910cd1e5ebf224033533292d371f898716934819cd20b1f9696a"
+    },
+    {
+      "file": "ui-atlas.png",
+      "width": 1448,
+      "height": 1086,
+      "sha256": "52f44599d875322f72b616a233c8a14b31a34599cea1712fa98f9a8eddfff72d",
+      "introducedIn": "cb08e604a8535a97e73bdd3d7f7ae49939e10286",
+      "role": "preserved-reference",
+      "quality": "legacy-reference",
+      "legacySha256": "52f44599d875322f72b616a233c8a14b31a34599cea1712fa98f9a8eddfff72d"
+    },
+    {
+      "file": "vehicle-atlas.png",
+      "width": 1145,
+      "height": 1374,
+      "sha256": "5f72399b7ecfc3609694bbaafddaa297fa2b8d280909a83987f658b5ec983d7b",
+      "introducedIn": "9f77f3f07b5b362d07a86480c4cda84f19819292",
+      "role": "runtime",
+      "quality": "legacy-reference",
+      "legacySha256": "5f72399b7ecfc3609694bbaafddaa297fa2b8d280909a83987f658b5ec983d7b"
+    },
+    {
+      "file": "wear-glasses.png",
+      "width": 1402,
+      "height": 1122,
+      "sha256": "6895df0b18c562ffe8551d453cb8e459cc62c2675f905100066720f23e277e9c",
+      "introducedIn": "9ebd5154234fa29faabf6388b2da59f9fae8e149",
+      "role": "runtime",
+      "quality": "legacy-reference",
+      "legacySha256": "6895df0b18c562ffe8551d453cb8e459cc62c2675f905100066720f23e277e9c"
+    },
+    {
+      "file": "wear-hat.png",
+      "width": 1402,
+      "height": 1122,
+      "sha256": "6fc391dde7a2d83530b95713acff9a8cc0fb80afd2368d3b5ce4c6bf796743a5",
+      "introducedIn": "9ebd5154234fa29faabf6388b2da59f9fae8e149",
+      "role": "runtime",
+      "quality": "legacy-reference",
+      "legacySha256": "6fc391dde7a2d83530b95713acff9a8cc0fb80afd2368d3b5ce4c6bf796743a5"
+    },
+    {
+      "file": "wear-shirt.png",
+      "width": 1402,
+      "height": 1122,
+      "sha256": "2b88d7c360cec7bb37f97cd7bdbbc01e4dd0c68fde392b4963f181dcf39f2d23",
+      "introducedIn": "9ebd5154234fa29faabf6388b2da59f9fae8e149",
+      "role": "runtime",
+      "quality": "legacy-reference",
+      "legacySha256": "2b88d7c360cec7bb37f97cd7bdbbc01e4dd0c68fde392b4963f181dcf39f2d23"
+    },
+    {
+      "file": "wear-shoes.png",
+      "width": 1402,
+      "height": 1122,
+      "sha256": "8708ce8b646132c514e5f19357e65a7d23780248b954ad42ba340119ce5139a1",
+      "introducedIn": "9ebd5154234fa29faabf6388b2da59f9fae8e149",
+      "role": "runtime",
+      "quality": "legacy-reference",
+      "legacySha256": "8708ce8b646132c514e5f19357e65a7d23780248b954ad42ba340119ce5139a1"
+    },
+    {
+      "file": "wearables-cardinal.png",
+      "width": 1278,
+      "height": 1230,
+      "sha256": "620c5547d01b085b659a67b429cdb34fd12a615a723281b193edfc23ad065a41",
+      "introducedIn": "ce5f0173a6e835d724e8f693d9715fb7bf4a0e92",
+      "role": "preserved-reference",
+      "quality": "legacy-reference",
+      "legacySha256": "620c5547d01b085b659a67b429cdb34fd12a615a723281b193edfc23ad065a41"
+    }
+  ]
+}

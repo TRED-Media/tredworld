@@ -4,6 +4,7 @@ import {atlasRegions} from './atlas-regions.js';
 export const directions=['front','back','left','right'];
 export const wardrobeSlots=['shirt','hat','glasses','shoes'];
 export const actorRig={
+ textureScale:4,
  floorOffset:21,body:{x:-20,y:-60,w:40,h:60},waist:-20,
  canvas:{w:64,h:84,x:32,y:63},head:{top:-65,bottom:-33},
  neck:{x:-3,y:-36,w:6,h:8},hands:{from:.66,to:.77},seated:{shift:4,cut:-12}

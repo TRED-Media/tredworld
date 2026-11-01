@@ -1,5 +1,6 @@
 import {spriteFrame} from './sprite-fit.js';
 import {atlasRules,wearableRules,FrameCache,textureKey,validateArtSpec,directionIndex} from './asset-rules.js';
+import {wearRegions} from './wear-regions.js';
 
 export const itemRows = ['shirt','glasses','hat','shoes','case','monitor','cooling','desk','chair','decor','accessory'];
 const rowCuts = [0,180,275,400,525,680,805,930,1055,1220,1375,1484];
@@ -34,8 +35,16 @@ export function wardrobeSource(item,direction=0) {
  const row=wearableRules[item.category]?.row;
  if(row===undefined)return null;
  direction=directionIndex(direction);
- const frame=item.art?customSource(item.art,direction):cardinalFrame('wearables-cardinal',row,direction,4);
+ let frame;
+ if(item.art)frame=customSource(item.art,direction);
+ else {
+  const image=loadArt('wear-'+item.category),region=wearRegions[item.category]?.[direction*5+item.variant%5];
+  frame=image.complete&&image.naturalWidth&&region?spriteFrame(image,...region):null;
+ }
  if(!frame||frame.empty)return null;
+ // Existing catalog colors identify the authored designs. Keep their original
+ // fabric, logos and accents; only an explicit custom palette invokes tinting.
+ if(!item.color||['#de6c80','#88ac83','#83afc6','#d4ad70','#9993cd'][item.variant%5]===item.color.toLowerCase())return frame;
  const key=[revision,direction,textureKey(item)].join(':');
  if(tinted.has(key))return tinted.get(key);
  const canvas=document.createElement('canvas');canvas.width=frame.sw;canvas.height=frame.sh;
@@ -93,4 +102,4 @@ export function itemSource(item) {
 }
 
 // Preload all shop art, including assets for categories not on the first page.
-for (const name of ['items-atlas','pet-atlas','vehicle-atlas','office-atlas','characters-cardinal','wearables-cardinal','furniture-straight']) loadArt(name);
+for (const name of ['items-atlas','pet-atlas','vehicle-atlas','office-atlas','characters-cardinal','wear-hat','wear-shirt','wear-shoes','wear-glasses','furniture-straight']) loadArt(name);

@@ -1,4 +1,5 @@
 import {mountVehiclePreview} from './vehicle-preview.js';
+import {configureCanvas,displayRatio} from './render-quality.js';
 import {api} from './api.js';
 import {categories,rarities,levelInfo} from '../shared/catalog.js';
 import {itemImage,drawItem,drawWorkstation} from './item-art.js';
@@ -23,7 +24,7 @@ async function guarded(fn){if(busy)return;busy=true;const buttons=[...document.q
 async function refresh(){const old=game.state?.me.level.level;game.state=await api.state();hud();if(old&&game.state.me.level.level>old){notify(`LÊN CẤP ${game.state.me.level.level} · ${game.state.me.level.title}`);document.body.classList.add('level-up');setTimeout(()=>document.body.classList.remove('level-up'),1500);}}
 async function action(name,p){await api.action(name,p);await refresh();}
 function on(action,fn){document.querySelectorAll(`[data-action="${action}"]`).forEach(b=>b.onclick=()=>guarded(()=>fn(b)));}
-function hud(){const s=game.state;if(!s)return;const me=s.me,l=me.level;$('#avatar').outerHTML=`<img id="avatar" width="96" height="120" src="${avatarImage(me,s.catalog)}" alt="Nhân vật">`;$('#profile').innerHTML=`<img width="42" height="48" src="${avatarImage(me,s.catalog)}" alt=""><span>${esc(me.name)}<small>Lv.${l.level} · ${fmt(me.rc)} RC</small></span>`;$('.wallet').innerHTML=`<span>RC <b id="rc-balance">${fmt(me.rc)}</b></span><span>Lv.${l.level} <b>${l.current}/${l.needed} XP</b></span><button id="eco-map" aria-label="Bản đồ">▦</button><button id="eco-settings" aria-label="Cài đặt">⚙</button>`;$('#eco-map').onclick=()=>window.dispatchEvent(new Event('open-map'));$('#eco-settings').onclick=settings;$('.world-top h1').innerHTML=`Chào ${esc(me.name)} <span>☀</span>`;$('.player-card h2').innerHTML=`${esc(me.name)} <span>LV.${l.level}</span>`;$('.player-card p').textContent=me.title;$('.player-card .xp i').style.width=`${l.progress*100}%`;$('.player-card>small').textContent=`${fmt(me.xp)} XP · ${fmt(l.next)} XP lên cấp`;const active=s.shifts.find(x=>!x.out);$('#checkin').textContent=active?'↪ Check-out':'◉ Check-in';$('#checkin').onclick=()=>openEconomy('checkin');$('.game-footer>span:last-child').textContent=(cloudMode?'CLOUD TEST · ':'LOCAL SERVER · ')+me.status;const quests=s.tasks.filter(t=>t.assignee===me.id).slice(0,3);$('#daily').innerHTML=quests.map(t=>`<button class="quest" data-task="${t.id}"><span>▤</span><div><b>${esc(t.title)}</b><small>${esc(statusName(t.status))}</small></div></button>`).join('');document.querySelectorAll('[data-task]').forEach(b=>b.onclick=()=>taskDetail(b.dataset.task));const q=$('[data-page=quests] em');if(q)q.textContent=s.tasks.filter(t=>t.assignee===me.id&&t.status==='assigned').length;}
+function hud(){const s=game.state;if(!s)return;const me=s.me,l=me.level;$('#avatar').outerHTML=`<img id="avatar" width="96" height="120" src="${avatarImage(me,s.catalog)}" alt="Nhân vật">`;$('#profile').innerHTML=`<img width="42" height="48" src="${avatarImage(me,s.catalog)}" alt=""><span>${esc(me.name)}<small>Lv.${l.level} · ${fmt(me.rc)} RC</small></span>`;$('.wallet').innerHTML=`<span>RC <b id="rc-balance">${fmt(me.rc)}</b></span><span>Lv.${l.level} <b>${l.current}/${l.needed} XP</b></span><button id="eco-map" aria-label="Bản đồ">${icon('map')}</button><button id="eco-settings" aria-label="Cài đặt">${icon('settings')}</button>`;$('#eco-map').onclick=()=>window.dispatchEvent(new Event('open-map'));$('#eco-settings').onclick=settings;$('.world-top h1').innerHTML=`Chào ${esc(me.name)} <span>☀</span>`;$('.player-card h2').innerHTML=`${esc(me.name)} <span>LV.${l.level}</span>`;$('.player-card p').textContent=me.title;$('.player-card .xp i').style.width=`${l.progress*100}%`;$('.player-card>small').textContent=`${fmt(me.xp)} XP · ${fmt(l.next)} XP lên cấp`;const active=s.shifts.find(x=>!x.out);$('#checkin').textContent=active?'↪ Check-out':'◉ Check-in';$('#checkin').onclick=()=>openEconomy('checkin');$('.game-footer>span:last-child').textContent=(cloudMode?'CLOUD TEST · ':'LOCAL SERVER · ')+me.status;const quests=s.tasks.filter(t=>t.assignee===me.id).slice(0,3);$('#daily').innerHTML=quests.map(t=>`<button class="quest" data-task="${t.id}"><span>▤</span><div><b>${esc(t.title)}</b><small>${esc(statusName(t.status))}</small></div></button>`).join('');document.querySelectorAll('[data-task]').forEach(b=>b.onclick=()=>taskDetail(b.dataset.task));const q=$('[data-page=quests] em');if(q)q.textContent=s.tasks.filter(t=>t.assignee===me.id&&t.status==='assigned').length;}
 window.addEventListener('art-ready',()=>{
  if(!game.state)return;
  for(const img of document.querySelectorAll('[data-item-id] img, img[data-art-id]')){const item=game.state.catalog.find(i=>i.id===(img.dataset.artId||img.closest('[data-item-id]')?.dataset.itemId));if(item)img.src=itemImage(item);}
@@ -46,7 +47,8 @@ function itemDetail(id){
  const walkButton=$('#preview-walk');if(walkButton)walkButton.onclick=()=>{walk=!walk;walkButton.setAttribute('aria-pressed',String(walk));walkButton.textContent=walk?'Dừng đi bộ':'Thử đi bộ';};
  const draw=t=>{
   if(!c.isConnected)return;
-  const icon=$('#item-preview')!==c?$('#item-preview'):$('#item-icon');if(icon){const ic=icon.getContext('2d');ic.clearRect(0,0,64,64);drawItem(ic,i,0,0,64,t,game.aura);}
+  configureCanvas(c,192,192,{ratio:displayRatio()*c.getBoundingClientRect().width/192});
+  const icon=$('#item-preview')!==c?$('#item-preview'):$('#item-icon');if(icon){const {ctx:ic}=configureCanvas(icon,64,64,{ratio:displayRatio()});ic.clearRect(0,0,64,64);drawItem(ic,i,0,0,64,t,game.aura);}
   ctx.clearRect(0,0,192,192);c.style.background='#28364a';ctx.fillStyle='#34465b';ctx.fillRect(12,161,168,2);
   if(wearable){ctx.save();ctx.scale(2.5,2.5);drawCharacter(ctx,trying,s.catalog,38,44,{direction,frame:t*60/1000,moving:walk,aura:game.aura,pet:false});ctx.restore();}
   else if(furniture)drawWorkstation(ctx,trying,s.catalog,26,12,140,game.aura,t);
@@ -89,6 +91,7 @@ export function workspace(id){
  }
  const paint=t=>{
   if(!c.isConnected)return;
+  configureCanvas(c,480,300,{ratio:displayRatio()*c.getBoundingClientRect().width/480});
   workstationScene(ctx,draft,s.catalog,t,game.aura,drawWorkstation);
   if(formElement&&selected){const part=workstationLayout(draft,s.catalog).find(p=>p.slot===selected.slot);ctx.strokeStyle='#f1cd8f';ctx.lineWidth=1;ctx.setLineDash([4,3]);ctx.strokeRect(160+part.x*160/96,72+part.y*160/96,part.w*160/96,part.h*160/96);ctx.setLineDash([]);}
   requestAnimationFrame(paint);

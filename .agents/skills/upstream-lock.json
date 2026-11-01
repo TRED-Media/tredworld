@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "name": "pixel-art",
+      "repository": "https://github.com/ervareza/agent-skill-pixel-art",
+      "commit": "0de5e49a9ce9c1a326910b4efe3420c030ce3856",
+      "path": "skills/pixel-art",
+      "integration": "MIT source vendored under .agents/skills/pixel-art; project orchestration preserves legacy masters",
+      "skillSha256": "705aecc307cea37ea0f292931dad574abdf48b3f7f6e728d5277a711bdba7b23"
+    },
+    {
+      "name": "sprite-pipeline",
+      "repository": "https://github.com/kevinoldching/codex-plugins",
+      "commit": "33bd9529725fcee78c9e51fcbaa93cd963c3a47b",
+      "path": "plugins/game-studio/skills/sprite-pipeline",
+      "integration": "Pinned workflow reference and local project adapter; project implementation in scripts/sprite_pipeline.py",
+      "skillSha256": "eaaca5ef3faef575164e0775394980318b5561ba54fe7552dbe41971717cc7fc"
+    }
+  ]
+}

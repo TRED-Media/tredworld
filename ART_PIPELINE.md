@@ -29,11 +29,11 @@ art: {
 
 A directional sheet must have four columns in the order above. A stationary prop uses `directional: false` and its declared column. Coordinates are validated; invalid grids are rejected. New categories or substantially different body anatomy require a deliberate rule in `asset-rules.js`, rather than offsets added to UI or scene code.
 
-Wearables inherit their catalog color. Keep the source garment's tintable fabric in the established red (hoodie), blue (cap) or midtone (shoes) material range; preserve outlines and white accents. The actual color and art definition participate in texture cache keys. Rarity decorations are excluded from worn textures and applied separately. Missing or loading worn layers retain the base garment, hair and footwear until their source is ready.
+Default wearables use the original `wear-shirt`, `wear-hat`, `wear-glasses` and `wear-shoes` masters, with native rectangles in `wear-regions.js` (four directional rows, five styles). Their authored colors, logos, cuts and accents stay intact. The catalog's legacy palette values identify those original designs; an explicit custom palette still invokes the cached material tint. Do not replace all styles with a recolored generic hoodie. Custom `art` definitions remain supported. Actual color and art participate in texture cache keys. Rarity decorations are excluded from worn textures and applied separately. Loading worn layers retain the base garment, hair and footwear until their source is ready.
 
 ## Composition, animation and depth
 
-The actor compiler fits the base once and uses that exact transform for preserved skin/hands. It composes torso, hands, head, cap and glasses into a bounded cached canvas. Shoes use the floor anchor, independently of torso bob. Seated and driving poses hide standing legs and shoes. Animation receives elapsed-time ticks (60 ticks/second), not the number of display refreshes.
+The actor compiler fits the base once and uses that exact transform for preserved skin/hands. It composes torso, hands, head, cap and glasses into a bounded cached canvas at four samples per world pixel; final draw destinations retain the original world dimensions. Close-up views therefore read detail from the master instead of enlarging a 60-pixel intermediate. Shoes use the floor anchor, independently of torso bob. Seated and driving poses hide standing legs and shoes. Animation receives elapsed-time ticks (60 ticks/second), not the number of display refreshes.
 
 `actor-anatomy.js` measures the head silhouette, face and feet in each model/view once. Hats inherit skull width and crown height; glasses inherit face width and eye line. Padding in a shop icon must not determine accessory size. Footwear inherits the original foot span and is clipped at the measured ankle line, then trousers render in front of the shoe collar. This prevents large boot sprites from repainting the shins in front/back views.
 
@@ -59,7 +59,7 @@ Prepared body, hand, tint and thumbnail caches have size limits. Warm animation 
 
 `src/vehicle-rig.js` resolves a shared type profile, model-specific overrides and optional `vehicle.rider` overrides. Two-wheel anchors (`seat`, two `grips`, two `feet`) are normalized to the fitted vehicle rectangle. Declare the native sprite axis as `forward: 'up'` or `'down'`; it controls both vehicle rotation and rider orientation. Optional `vehicle.rig` dimensions must be positive. Anchor and scale validation rejects malformed profiles before rendering.
 
-The pose solver builds shoulders, elbows, hips and knees from the saddle and contact anchors. Bicycles move their pedals only while moving; scooters and motorcycles keep their feet at the declared supports. Arms reach each grip. Clothing and skin reuse the character's prepared textures, while standing legs are excluded. Far limbs, vehicle, near limbs, front fairing, hands and head have an explicit composition order. The per-model rider data covers all twelve existing designs without separate scene or preview offsets.
+The pose solver builds shoulders, elbows, hips and knees from the saddle and contact anchors. `reach` projects the chest toward the real grips and foreshortens its height in front views; the head retains its original proportions. The torso contains shirt pixels only, excluding standing trousers. Bicycles move their pedals only while moving; scooters and motorcycles keep their feet at the declared supports. Arms reach each grip and sample the authored sleeve color; short sleeves expose forearms. Each foot uses one shoe, rather than a whole pair. Far limbs, vehicle, near limbs, front fairing, hands and head have an explicit composition order. The per-model rider data covers all twelve existing designs without separate scene or preview offsets.
 
 The local actor updates immediately. `PresenceMotion` interpolates each remote actor once, follows cardinal legs across missed corner packets and supplies the same root and facing to vehicle, rider and labels. Mount state comes from authoritative `vehicleParked`, including after reconnect. Parking restores the walking renderer.
 
@@ -67,11 +67,17 @@ The garage's **Xem tư thế lái** action (also `?preview=vehicles` after login
 
 ## Checks
 
+`render-quality.js` owns physical canvas sizing and CSS/world projection. The world follows screen density (capped at DPR 3 for memory); zoom and camera translation snap to complete physical pixels. Never use physical backing dimensions to map touch coordinates. Fitting, workstation, vehicle and map previews draw at their displayed density. Owner/actor labels draw after the world transform, using screen-sized system text. UI text and pixel SVG icons remain vector/CSS; no panel is enlarged with a CSS transform. Thumbnails read the master into a 256-pixel export directly; portraits and compiled actor layers have bounded caches.
+
+Original PNGs are registered with dimensions, SHA-256 and Git provenance in `public/art/quality-manifest.json`. Run the source check in addition to visual tests. An intentional replacement requires a native-resolution comparison and explicit manifest update; never overwrite a source with a screenshot or resized export. Archived reference sheets stay available without becoming runtime fallbacks.
+
 ```sh
 npm test
 npm run build
 npm run test:browser
 npm run test:assets
+npm run test:art-source
+npm run test:graphics
 ```
 
 The asset browser audit uses an isolated temporary database. It checks every catalog asset (including archived ownership references), both models, all cardinal views, four riding phases, accessory proportions, unchanged trouser-cuff pixels, seated legs, palette invalidation, fractional atlas boundaries and warm-frame canvas allocation. Car renders are compared with the original vehicle: pixels outside the windshield must stay unchanged, while the driver's face remains visible behind glass. It also runs fitting-room and authoritative mount, movement and parking checks. Captures are written to ignored `work/screenshots/` for visual review; do not update gameplay databases or remove owned items to repair presentation.

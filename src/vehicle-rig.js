@@ -3,9 +3,9 @@ import {directionIndex,vehicleRules} from './asset-rules.js';
 // Anchors are normalized against the fitted vehicle image, not the shop cell.
 // Every model inherits a type rig and may override it with vehicle.rider.
 export const riderTypes={
- bike:{seat:[.5,.61],grips:[[.22,.32],[.78,.32]],feet:[[.32,.64],[.68,.64]],scale:.78,lean:2,torso:11,pedal:.065},
- scooter:{seat:[.5,.46],grips:[[.17,.68],[.83,.68]],feet:[[.35,.64],[.65,.64]],scale:.78,lean:1,torso:11,pedal:0},
- motorbike:{seat:[.5,.30],grips:[[.2,.49],[.8,.49]],feet:[[.32,.51],[.68,.51]],scale:.76,lean:6,torso:9,pedal:0}
+ bike:{seat:[.5,.61],grips:[[.22,.32],[.78,.32]],feet:[[.32,.64],[.68,.64]],scale:.78,lean:2,torso:11,pedal:.065,reach:.3},
+ scooter:{seat:[.5,.46],grips:[[.17,.68],[.83,.68]],feet:[[.35,.64],[.65,.64]],scale:.78,lean:1,torso:11,pedal:0,reach:.2},
+ motorbike:{seat:[.5,.30],grips:[[.2,.49],[.8,.49]],feet:[[.32,.51],[.68,.51]],scale:.76,lean:6,torso:9,pedal:0,reach:.35}
 };
 // Bicycles point up in the supplied sheet; scooters and motorcycles point down.
 export const riderModels={
@@ -36,6 +36,7 @@ export function validateRider(rider){
  for(const point of [rider.seat,...(rider.grips||[]),...(rider.feet||[])])if(!Array.isArray(point)||point.length!==2||!point.every(n=>Number.isFinite(n)&&n>=0&&n<=1))throw new Error('Rider anchors must be normalized');
  if(rider.grips?.length!==2||rider.feet?.length!==2)throw new Error('Rider requires two grips and foot supports');
  if(!Number.isFinite(rider.scale)||rider.scale<=0||rider.scale>1.5||!Number.isFinite(rider.lean)||!Number.isFinite(rider.torso)||rider.torso<=0)throw new Error('Invalid rider proportions');
+ if(rider.reach!==undefined&&(!Number.isFinite(rider.reach)||rider.reach<0||rider.reach>1))throw new Error('Invalid projected rider reach');
  return rider;
 }
 export function rotatePoint([x,y],angle){return [x*Math.cos(angle)-y*Math.sin(angle),x*Math.sin(angle)+y*Math.cos(angle)];}
@@ -53,9 +54,13 @@ export function riderPose(vehicle,rect,direction,frame=0,moving=false){
   const q=[...p];if(rig.pedal&&moving)q[1]+=Math.sin(phase+index*Math.PI)*rig.pedal;
   return point(q);
  });
- const neck=[hip[0]+forward[0]*rig.lean,hip[1]-rig.torso+forward[1]*rig.lean*.55];
+ const grips=rig.grips.map(point),center=grips.reduce((a,p)=>[a[0]+p[0]/2,a[1]+p[1]/2],[0,0]);
+ // Project the chest toward the actual handlebar. Front views foreshorten the
+ // torso instead of drawing an upright walking body over a top-down vehicle.
+ let chest=[(center[0]-hip[0])*(rig.reach||0)+forward[0]*rig.lean,Math.max(-rig.torso*1.1,Math.min(-3,-rig.torso*.7+(center[1]-hip[1])*(rig.reach||0)+forward[1]*rig.lean*.35))];
+ const length=Math.hypot(...chest),limit=rig.torso*1.1;if(length>limit)chest=chest.map(n=>n*limit/length);
+ const neck=[hip[0]+chest[0],hip[1]+chest[1]];
  const shoulders=[-1,1].map(sign=>[neck[0]+right[0]*5*rig.scale*sign,neck[1]+2+right[1]*3*rig.scale*sign]);
  const hips=[-1,1].map(sign=>[hip[0]+right[0]*3*rig.scale*sign,hip[1]+right[1]*2*rig.scale*sign]);
- const grips=rig.grips.map(point);
  return {hip,neck,shoulders,hips,grips,feet,right,forward,scale:rig.scale,phase,kind:vehicle.kind,parts:[0,1].map(index=>({shoulder:shoulders[index],elbow:hinge(shoulders[index],grips[index],index?2:-2),hand:grips[index],hip:hips[index],knee:hinge(hips[index],feet[index],index?4:-4),foot:feet[index]}))};
 }
