@@ -11,7 +11,7 @@
     "test:assets": "node tests/appearance-browser.mjs",
     "test:art-source": "node scripts/check-art.mjs",
     "test:graphics": "node tests/graphics-browser.mjs",
-    "assets:check": "npm run test:art-source && node scripts/check-asset-rigs.mjs",
+    "assets:check": "npm run test:art-source && node scripts/check-asset-rigs.mjs && node scripts/check-world-contract.mjs",
     "assets:audit": "python scripts/sprite_pipeline.py audit",
     "assets:normalize": "python scripts/sprite_pipeline.py normalize",
     "test:pipeline": "python tests/sprite_pipeline_test.py",
@@ -24,7 +24,8 @@
     "visual:compare": "node scripts/visual-regression.mjs compare",
     "visual:review": "node scripts/visual-regression.mjs review",
     "visual:check": "node scripts/visual-regression.mjs check",
-    "test:visual": "node scripts/visual-self-check.mjs"
+    "test:visual": "node scripts/visual-self-check.mjs",
+    "test:office": "node tests/office-browser.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.0",

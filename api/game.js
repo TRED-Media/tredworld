@@ -21,10 +21,13 @@ export default async function handler(req,res){
   if(path==='logout'&&req.method==='POST'){const id=await withCloudEngine(e=>{const id=e.auth(token);e.logout(token);return id;},{write:true});await rpc('offline',{id});res.setHeader('Set-Cookie','tred_session=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0');return send(200,{ok:true});}
   if(path==='state'&&req.method==='GET')return send(200,await withCloudEngine(e=>e.state(e.auth(token))));
   if(path==='admin'&&req.method==='GET')return send(200,await withCloudEngine(e=>e.admin(e.auth(token))));
-  if(path.startsWith('action/')&&req.method==='POST')return send(200,await withCloudEngine(e=>e.mutate(e.auth(token),path.slice(7),body,String(req.headers['idempotency-key']||'')),{write:true}));
+  if(path.startsWith('action/')&&req.method==='POST'){
+   const presence=path==='action/seat'&&body.seatId!==null?await rpc('world'):[];
+   return send(200,await withCloudEngine(e=>{const id=e.auth(token);return e.mutate(id,path.slice(7),body,String(req.headers['idempotency-key']||''),{position:presence.find(p=>p.id===id)?.position,onlineIds:presence.map(p=>p.id)});},{write:true}));
+  }
   if(path==='world'&&req.method==='GET'){
    const data=await withCloudEngine((e,revision)=>({users:e.state(e.auth(token)).users,revision}));const presence=await rpc('world');
-   return send(200,{users:data.users.map(u=>({...u,...presence.find(p=>p.id===u.id),online:presence.some(p=>p.id===u.id)})),revision:data.revision});
+   return send(200,{users:data.users.map(u=>({...u,...presence.find(p=>p.id===u.id),...appearancePresence(presence.find(p=>p.id===u.id)||{},u),online:presence.some(p=>p.id===u.id)})),revision:data.revision});
   }
   if(path==='position'&&req.method==='POST'){
    const user=await withCloudEngine(e=>e.publicUser(e.state(e.auth(token)).me));

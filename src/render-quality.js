@@ -1,4 +1,7 @@
 // CSS/world coordinates stay independent of the physical canvas resolution.
+export const worldMaterialDensity=2;
+export function setWorldMaterial(context,enabled=true){context.worldMaterialDensity=enabled?worldMaterialDensity:0;}
+export function materialDensity(context){return context.worldMaterialDensity||0;}
 export function displayRatio(value=globalThis.devicePixelRatio||1){return Number.isFinite(value)?Math.max(1,Math.min(3,value)):1;}
 export function configureCanvas(canvas,width,height,{ratio=displayRatio(),pixelArt=true}={}){
  ratio=Number.isFinite(ratio)?Math.max(.25,Math.min(8,ratio)):1;

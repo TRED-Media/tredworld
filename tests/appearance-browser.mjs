@@ -47,7 +47,7 @@ try {
      if(slot==='glasses'&&direction===1)continue;
      const item=catalog.find(i=>i.id===user.equipment[slot]),source=wardrobeSource(item,direction),box=attachmentBox(slot,direction,anatomy);
      const fit=containRect(source.sw,source.sh,box.x,box.y,box.w,box.h,box.alignY);
-     if(slot==='hat'&&(fit.w>anatomy.frontalFace.w*1.14||fit.h>anatomy.head.h*.65))proportionFailures.push({id,direction,slot});
+     if(slot==='hat'&&(fit.w>anatomy.frontalFace.w*1.25||fit.h>anatomy.head.h*.80))proportionFailures.push({id,direction,slot});
      if(slot==='glasses'&&(fit.w>anatomy.face.w*.8||fit.h>anatomy.face.h*.35))proportionFailures.push({id,direction,slot});
     }
     const bare=document.createElement('canvas');bare.width=64;bare.height=80;

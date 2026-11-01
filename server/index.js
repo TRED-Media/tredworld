@@ -10,7 +10,7 @@ export function createGameServer({dbPath=resolve(root,'data/game.sqlite')}={}){
  if(dbPath!==':memory:')mkdirSync(resolve(dbPath,'..'),{recursive:true});
  const engine=new Engine(dbPath),streams=new Set(),positions=new Map(),attempts=new Map();
  const cookie=req=>String(req.headers.cookie||'').split(';').map(x=>x.trim()).find(x=>x.startsWith('tred_session='))?.slice(13);
- const snapshot=()=>({users:engine.read().users.filter(u=>u.active).map(u=>({...engine.publicUser(u),...(positions.get(u.id)||{}),online:[...streams].some(s=>s.id===u.id)}))});
+ const snapshot=()=>({users:engine.read().users.filter(u=>u.active).map(u=>({...engine.publicUser(u),...(positions.get(u.id)||{}),...appearancePresence(positions.get(u.id)||{},u),online:[...streams].some(s=>s.id===u.id)}))});
  let closed=false;
  const broadcast=()=>{if(closed)return;const data=JSON.stringify(snapshot());for(const s of streams)s.res.write(`event: world\ndata: ${data}\n\n`);};
  const server=http.createServer(async(req,res)=>{
@@ -28,7 +28,7 @@ export function createGameServer({dbPath=resolve(root,'data/game.sqlite')}={}){
  if(path==='/api/admin'&&req.method==='GET')return json(200,engine.admin(id));
  if(path==='/api/events'&&req.method==='GET'){res.writeHead(200,{'Content-Type':'text/event-stream','Cache-Control':'no-cache','Connection':'keep-alive','X-Accel-Buffering':'no'});const stream={id,token,res};streams.add(stream);broadcast();req.on('close',()=>{streams.delete(stream);broadcast();});return;}
  if(path==='/api/position'&&req.method==='POST'){const {x,y,animation}=body;if(!Number.isFinite(x)||!Number.isFinite(y)||blocked(x,y))throw new GameError('Vị trí không hợp lệ');const old=positions.get(id);if(old&&Math.hypot(x-old.position.x,y-old.position.y)>Math.max(80,(Date.now()-old.at)*.3))throw new GameError('Di chuyển quá nhanh');positions.set(id,{position:{x,y},...appearancePresence(body,engine.read().users.find(u=>u.id===id)),at:Date.now()});broadcast();return json(200,{ok:true});}
- if(path.startsWith('/api/action/')&&req.method==='POST'){const result=engine.mutate(id,path.split('/').pop(),body,String(req.headers['idempotency-key']||''));broadcast();for(const stream of streams)stream.res.write('event: changed\ndata: {}\n\n');return json(200,result);}
+ if(path.startsWith('/api/action/')&&req.method==='POST'){const result=engine.mutate(id,path.split('/').pop(),body,String(req.headers['idempotency-key']||''),{position:positions.get(id)?.position,onlineIds:[...streams].map(s=>s.id)});broadcast();for(const stream of streams)stream.res.write('event: changed\ndata: {}\n\n');return json(200,result);}
  return json(404,{error:'Không có endpoint này'});
  }catch(e){json(e.status||500,{error:e instanceof GameError?e.message:'Lỗi server, thao tác chưa hoàn tất'});if(!(e instanceof GameError))console.error(e);}
  });

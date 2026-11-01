@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "reviewedAt": "2026-11-01T04:02:59.107Z",
-  "reason": "Recorded exact fetched source hashes and immutable script URLs; all compatibility, permission, visual and gameplay checks passed",
+  "reviewedAt": "2026-11-01T10:14:36.220Z",
+  "reason": "Add isolated test:office to gameplay/visual routing and verify allowlist; inspect source-only world contract gate, no network or credential access. Build validates density/palette/gutters and all seat paths; test output stays in a separate work evidence directory.",
   "files": {
     ".agents/skills/tred-development/SKILL.md": "7a82dcbd4e05f45961a5f82506b44d6bb8d2037876e64c0b27a173e2dff74b2a",
     ".agents/skills/tred-game-ui/SKILL.md": "e4aa79399ce043dc7847cd4803dfdec94ac1349b3bdbd63477203766b6ac0dcb",
@@ -31,6 +31,6 @@
     ".agents/skills/pixel-art/scripts/sprite_mirror.py": "5b0ea0bda2d87ae51b183d84f8da9d7f85f0b25b1ae54fd117ca5064e200b432",
     ".agents/skills/pixel-art/scripts/sprite_resize.py": "8a179e140aba8b3d599a1893128e901a909d02a70ee1f6adbe4dda3952999116"
   },
-  "registrySha": "298270a0cb441c5b3c9255c4c904f41f06d23f746ed261d1a87f7803753222a3",
+  "registrySha": "a36fbc8937835a20a8c4382dcffd8e16de89b0b8b52d199e0d8231660ac3e8d9",
   "sourcesSha": "9548552b056597e5cd23373bb99b5a598c4933d8efdb537016a4e5c065f4bbd6"
 }

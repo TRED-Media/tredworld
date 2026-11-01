@@ -39,7 +39,8 @@ export function wardrobeSource(item,direction=0) {
  if(item.art)frame=customSource(item.art,direction);
  else {
   const image=loadArt('wear-'+item.category),region=wearRegions[item.category]?.[direction*5+item.variant%5];
-  frame=image.complete&&image.naturalWidth&&region?spriteFrame(image,...region):null;
+  // Preserve complete authored edges, including outlines outside old tight boxes.
+  frame=image.complete&&image.naturalWidth&&region?spriteFrame(image,Math.max(0,region[0]-6),Math.max(0,region[1]-6),region[2]+12,region[3]+12):null;
  }
  if(!frame||frame.empty)return null;
  // Existing catalog colors identify the authored designs. Keep their original
@@ -77,6 +78,7 @@ function customSource(spec,direction=0){
 export function itemSource(item) {
  if(wearableRules[item.category])return wardrobeSource(item);
  if(item.art)return customSource(item.art);
+ if(item.category==='chair')return cardinalFrame('chairs-cardinal',item.variant%5,0,5);
  if(['desk','monitor'].includes(item.category)){
   const image=loadArt('furniture-straight');if(!image.complete||!image.naturalWidth)return null;
   const w=image.naturalWidth/5,h=image.naturalHeight/2;
@@ -103,17 +105,24 @@ export function itemSource(item) {
 
 }
 
+// New chair atlases use the same four-view contract as characters. Legacy
+// front/rear specifications remain usable at desks without inventing side art.
+export function chairSource(item,direction=0){
+ direction=directionIndex(direction);
+ if(item.art?.directional)return customSource(item.art,direction);
+ if(item.art){
+  if(direction===1&&item.art.rear)return customSource(item.art.rear);
+  if(direction===0)return customSource(item.art);
+  throw Error('Custom chair artwork needs four directional views or its authored rear view');
+ }
+ return cardinalFrame('chairs-cardinal',item.variant%5,direction,5);
+}
+
 // Shop thumbnails retain the original front view; the chair at a desk faces away.
 export function stationSource(item,slot=item.category){
- if(slot==='chair'){
-  if(item.art?.rear)return customSource(item.art.rear);
-  if(item.art)throw Error('Custom chair artwork needs an art.rear view facing its desk');
-  const image=loadArt('chairs-rear');
-  if(image.complete&&image.naturalWidth)return spriteFrame(image,item.variant%5*128,0,128,192);
-  return null;
- }
+ if(slot==='chair')return chairSource(item,1);
  return itemSource(item);
 }
 
 // Preload all shop art, including assets for categories not on the first page.
-for (const name of ['items-atlas','pet-atlas','vehicle-atlas','office-atlas','characters-cardinal','wear-hat','wear-shirt','wear-shoes','wear-glasses','furniture-straight','chairs-rear']) loadArt(name);
+for (const name of ['items-atlas','pet-atlas','vehicle-atlas','office-atlas','characters-cardinal','wear-hat','wear-shirt','wear-shoes','wear-glasses','furniture-straight','chairs-cardinal','office-standard']) loadArt(name);

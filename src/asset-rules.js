@@ -6,7 +6,7 @@ export const wardrobeSlots=['shirt','hat','glasses','shoes'];
 export const actorRig={
  textureScale:4,
  floorOffset:21,body:{x:-20,y:-60,w:40,h:60},waist:-20,
- canvas:{w:64,h:84,x:32,y:63},head:{top:-65,bottom:-33},
+ canvas:{w:80,h:96,x:40,y:70},head:{top:-65,bottom:-33},
  neck:{x:-3,y:-36,w:6,h:8},hands:{from:.66,to:.77},seated:{shift:4,cut:-12}
 };
 export const wearableRules={
@@ -17,7 +17,7 @@ export const wearableRules={
 };
 // Attachment sizes are constrained by measured anatomy, not shop-card bounds.
 export const attachmentFit={
- hat:{skullWidth:1.13,headHeight:.64,alignY:0},
+ hat:{skullWidth:1.24,headHeight:.78,alignY:0},
  glasses:{faceWidth:.72,faceHeight:.30,eyeY:.48,alignY:.5},
  shoes:{footWidth:1.02,cuffOverlap:1,alignY:1}
 };
@@ -26,7 +26,7 @@ export function attachmentBox(slot,direction,anatomy){
  const {head,face,frontalFace,feet}=anatomy;
  if(slot==='hat'){
   const w=frontalFace.w*attachmentFit.hat.skullWidth,h=head.h*attachmentFit.hat.headHeight;
-  return {x:head.x+head.w/2-w/2,y:head.y-.5,w,h,alignY:0};
+  return {x:head.x+head.w/2-w/2,y:head.y-3,w,h,alignY:0};
  }
  if(slot==='glasses'){
   const side=direction>=2,w=face.w*(side?.70:attachmentFit.glasses.faceWidth),h=face.h*attachmentFit.glasses.faceHeight;
@@ -42,6 +42,7 @@ export function attachmentBox(slot,direction,anatomy){
 export const atlasRules={
  'characters-cardinal':{columns:4,rows:2},'wearables-cardinal':{columns:4,rows:4},
  'furniture-straight':{columns:5,rows:2},
+ 'chairs-cardinal':{columns:4,rows:5},
  'vehicle-atlas':{columns:4,rows:3,rowCuts:[0,455/1374,870/1374,1],regions:atlasRegions.vehicle,isolate:true},
  'pet-atlas':{columns:5,rows:4,regions:atlasRegions.pet,isolate:true}
 };

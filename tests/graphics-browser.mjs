@@ -33,7 +33,7 @@ try{
   metrics.push({name,...metric});
   if(label==='after'&&name==='mobile'){
    const point=await page.evaluate(async()=>{const {desks}=await import('/src/world.js'),{game,worldUser}=await import('/src/economy-ui.js');const desk=desks.find(d=>worldUser(d.owner)?.id===game.state.me.id),c=document.querySelector('#game'),r=c.getBoundingClientRect(),scale=Number(c.dataset.worldScale);return {x:r.left+(desk.seat.x-Number(c.dataset.cameraX))*scale,y:r.top+(desk.seat.y-Number(c.dataset.cameraY))*scale};});
-   await page.touchscreen.tap(point.x,point.y);await page.locator('#chair-checkin').waitFor();await page.locator('#close').click();
+   await page.touchscreen.tap(point.x,point.y);await page.waitForFunction(()=>document.querySelector('#game').dataset.seatId==='work-8');await page.keyboard.press('e');await page.locator('#chair-checkin').waitFor();await page.locator('#close').click();await page.keyboard.press('d');
    console.log('PASS DPR 3 touch projects the visible owner chair to the correct world interaction');
   }
   await page.locator('[data-page=store]').click();await page.locator('#category').selectOption('shirt');await page.screenshot({path:join(destination,`${label}-${name}-store.png`)});

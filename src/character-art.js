@@ -1,6 +1,8 @@
 import {vehicleProfile,riderPose} from './vehicle-rig.js';
 import {actorAnatomy} from './actor-anatomy.js';
 import {shirtFit} from './wearable-fit.js';
+import {standardPixels} from './material-standard.js';
+import {materialDensity,setWorldMaterial} from './render-quality.js';
 import {containRect,drawFrame,spriteFrame} from './sprite-fit.js';
 import {cardinalFrame,wardrobeSource,itemSource,artRevision} from './art-assets.js';
 import {actorRig,wardrobeSlots,wearableRules,wearableBox,attachmentBox,vehicleMount,vehicleRules,directionIndex,animationPose,textureKey,FrameCache} from './asset-rules.js';
@@ -16,43 +18,38 @@ function equipmentFor(user,items){
  let index=catalogIndexes.get(items);if(!index){index=new Map(items.map(item=>[item.id,item]));catalogIndexes.set(items,index);}
  return Object.fromEntries([...wardrobeSlots,'pet'].map(slot=>[slot,index.get(user?.equipment?.[slot])]));
 }
-function handLayer(f,model,direction){
+function dressedBase(f,model,direction){
  const key=[artRevision(),model,direction].join(':');if(hands.has(key))return hands.get(key);
  const image=document.createElement('canvas');image.width=f.sw;image.height=f.sh;
  const ctx=image.getContext('2d');ctx.drawImage(f.image,f.sx,f.sy,f.sw,f.sh,0,0,f.sw,f.sh);
  const pixels=ctx.getImageData(0,0,f.sw,f.sh);
  for(let y=0;y<f.sh;y++)for(let x=0;x<f.sw;x++){
   const n=(y*f.sw+x)*4,r=pixels.data[n],g=pixels.data[n+1],b=pixels.data[n+2];
-  // Keep continuous neck, arms and hands. The old wrist-only strip left a gap
-  // below short sleeves; drawing it last also painted skin over jacket cuffs.
-  if(y<f.sh*.35||y>f.sh*.80||!(r>g*1.13&&g>b*1.08&&r>130))pixels.data[n+3]=0;
+  // Replace the neutral base fabric semantically. Head, skin, trousers and
+  // silhouette stay whole; no horizontal head/arm strips or scalp cutaways.
+  const skin=r>g*1.13&&g>b*1.08&&r>130;
+  const fabric=y>f.sh*.42&&y<f.sh*.67&&r>55&&g>58&&b>65&&Math.max(r,g,b)-Math.min(r,g,b)<48;
+  if(fabric&&!skin)pixels.data[n+3]=0;
  }
  ctx.putImageData(pixels,0,0);const result={image,sx:0,sy:0,sw:f.sw,sh:f.sh};hands.set(key,result);return result;
 }
 function fitted(c,frame,box){return drawFrame(c,frame,box.x,box.y,box.w,box.h,box.alignY??1);}
-function bodyFrame(model,direction,equipment){
+function bodyFrame(model,direction,equipment,density=actorRig.textureScale){
  const base=cardinalFrame('characters-cardinal',model,direction,2);if(!base||base.empty)return null;
- const key=[artRevision(),model,direction,...wardrobeSlots.map(slot=>equipment[slot]?textureKey(equipment[slot]):'')].join('|');
+ const key=[artRevision(),model,direction,density,...wardrobeSlots.map(slot=>equipment[slot]?textureKey(equipment[slot]):'')].join('|');
  if(bodies.has(key))return bodies.get(key);
  const anatomy=actorAnatomy(model,direction);if(!anatomy)return null;
- const canvas=document.createElement('canvas');canvas.width=actorRig.canvas.w*actorRig.textureScale;canvas.height=actorRig.canvas.h*actorRig.textureScale;
- const c=canvas.getContext('2d');c.scale(actorRig.textureScale,actorRig.textureScale);c.translate(actorRig.canvas.x,actorRig.canvas.y);c.imageSmoothingEnabled=false;
+ const canvas=document.createElement('canvas');canvas.width=actorRig.canvas.w*density;canvas.height=actorRig.canvas.h*density;
+ const c=canvas.getContext('2d');c.scale(density,density);c.translate(actorRig.canvas.x,actorRig.canvas.y);c.imageSmoothingEnabled=false;
  const worn=Object.fromEntries(wardrobeSlots.map(slot=>[slot,equipment[slot]?wardrobeSource(equipment[slot],direction):null]));
  const d=containRect(base.sw,base.sh,actorRig.body.x,actorRig.body.y,actorRig.body.w,actorRig.body.h,1);d.x=Math.round(d.x);d.y=Math.round(d.y);
- const full=(source=base)=>{
-  c.save();if(worn.hat){c.beginPath();const cap=attachmentBox('hat',direction,anatomy);c.rect(-24,cap.y+cap.h*.58,48,70);c.clip();}
-  c.drawImage(source.image,source.sx,source.sy,source.sw,source.sh,d.x,d.y,d.w,d.h);c.restore();
- };
+ const full=(source=base)=>c.drawImage(source.image,source.sx,source.sy,source.sw,source.sh,d.x,d.y,d.w,d.h);
  if(worn.shirt){
-  const headCut=anatomy.neck.y-(direction===1?0:1.5);
-  c.save();c.beginPath();c.rect(-24,actorRig.head.top,48,headCut-actorRig.head.top);c.rect(-24,anatomy.waistY,48,(worn.shoes?anatomy.cuffY:0)-anatomy.waistY);c.clip();full();c.restore();
-  full(handLayer(base,model,direction));
+  c.save();if(worn.shoes){c.beginPath();c.rect(-40,actorRig.head.top,80,anatomy.cuffY-actorRig.head.top);c.clip();}full(dressedBase(base,model,direction));c.restore();
   fitted(c,worn.shirt,shirtFit(worn.shirt,equipment.shirt,direction,anatomy));
-  // Original chin/neck and hair overlap the inner collar, preserving skin tone.
-  c.save();c.beginPath();c.rect(-24,actorRig.head.top,48,headCut-actorRig.head.top);c.clip();full();c.restore();
-  // Only original skin crosses this seam; base-shirt shoulders must not survive
-  // as gray wedges behind the new collar.
-  c.save();c.beginPath();c.rect(-24,headCut,48,anatomy.neck.y+.25-headCut);c.clip();full(handLayer(base,model,direction));c.restore();
+  // Retain the complete head/neck mask over the collar, without erasing hair
+  // when a cap is equipped. The semantic base has no gray shoulder wedges.
+  c.save();c.beginPath();c.rect(-40,actorRig.head.top,80,anatomy.neck.y+.25-actorRig.head.top);c.clip();full(dressedBase(base,model,direction));c.restore();
  }else{
   c.save();if(worn.shoes){c.beginPath();c.rect(-24,actorRig.head.top,48,anatomy.cuffY-actorRig.head.top);c.clip();}full();c.restore();
  }
@@ -60,12 +57,18 @@ function bodyFrame(model,direction,equipment){
   const item=equipment[slot];if(!item||!worn[slot]||wearableRules[slot].hidden?.includes(direction))continue;
   fitted(c,worn[slot],attachmentBox(slot,direction,anatomy));
  }
+ // Fractional anatomical clip boundaries can create partial-alpha edge pixels
+ // even with nearest sampling. Seal the compiled material once, before caching.
+ const pixels=c.getImageData(0,0,canvas.width,canvas.height);standardPixels(pixels.data,false);c.putImageData(pixels,0,0);
  bodies.set(key,canvas);return canvas;
 }
 
+// Read-only shared compiler surface, also used by the clipping/alpha QA gate.
+export function characterSurface(user,items,direction=0,density=actorRig.textureScale){return bodyFrame(characterVariant(user),directionIndex(direction),equipmentFor(user,items),density);}
+
 export function drawCharacter(c,user,items,x,y,{direction=0,frame=0,moving=false,aura=true,pet=true,pose='stand'}={}){
  direction=directionIndex(direction);
- const equipment=equipmentFor(user,items),body=bodyFrame(characterVariant(user),direction,equipment);
+ const equipment=equipmentFor(user,items),body=bodyFrame(characterVariant(user),direction,equipment,materialDensity(c)||actorRig.textureScale);
  const animation=animationPose(frame,moving,pose),floor=Math.round(y)+actorRig.floorOffset;
  c.save();c.translate(Math.round(x),floor);c.imageSmoothingEnabled=false;
  c.save();
@@ -118,16 +121,17 @@ function riderPart(c,body,position,scale,head,tilt=0,direction=0){
  c.clip();c.drawImage(body,-actorRig.canvas.x,-actorRig.canvas.y+33,actorRig.canvas.w,actorRig.canvas.h);c.restore();
 }
 function riderTorso(c,body,pose,direction){
+ const density=body.width/actorRig.canvas.w;
  const width=direction>=2?10:18,from=actorRig.head.bottom,length=actorRig.waist-from;
  const distance=Math.hypot(pose.hip[0]-pose.neck[0],pose.hip[1]-pose.neck[1]);
  c.save();c.translate(...pose.neck);c.rotate(-Math.atan2(pose.hip[0]-pose.neck[0],pose.hip[1]-pose.neck[1]));
- c.drawImage(body,(actorRig.canvas.x-width/2)*actorRig.textureScale,(actorRig.canvas.y+from)*actorRig.textureScale,width*actorRig.textureScale,length*actorRig.textureScale,-width*pose.scale/2,0,width*pose.scale,Math.max(4,distance+1));c.restore();
+ c.drawImage(body,(actorRig.canvas.x-width/2)*density,(actorRig.canvas.y+from)*density,width*density,length*density,-width*pose.scale/2,0,width*pose.scale,Math.max(4,distance+1));c.restore();
 }
 function paintTwoWheel(c,user,items,vehicle,source,profile,direction,options){
  const angle=profile.angles[direction],rect=containRect(source.sw,source.sh,-profile.w/2,-profile.h/2,profile.w,profile.h,.5);
  rect.x=Math.round(rect.x);rect.y=Math.round(rect.y);
  const pose=riderPose(vehicle,rect,direction,options.frame||0,!!options.moving);
- const equipment=equipmentFor(user,items),body=bodyFrame(characterVariant(user),direction,equipment);
+ const equipment=equipmentFor(user,items),body=bodyFrame(characterVariant(user),direction,equipment,materialDensity(c)||actorRig.textureScale);
  if(!body)return;
  const shirt=fabricColor(equipment.shirt?wardrobeSource(equipment.shirt,direction):null),trousers='#283448',skin='#edbd9a',shortSleeves=!equipment.shirt||[1,2].includes(equipment.shirt.variant%5);
  const shoePair=wardrobeSource(equipment.shoes||{category:'shoes',variant:0,color:'#de6c80'},direction===1?1:0);
@@ -159,9 +163,9 @@ export function drawRider(c,user,items,vehicle,x,y,options={}){
  c.save();c.translate(Math.round(x),Math.round(y));c.imageSmoothingEnabled=false;
  if(rule.rider){
   const size=2**Math.ceil(Math.log2(Math.max(rule.w,rule.h)+120));
-  let surface=riderSurfaces.get(size);
-  if(!surface){surface=document.createElement('canvas');surface.width=surface.height=size*actorRig.textureScale;riderSurfaces.set(size,surface);}
-  const rc=surface.getContext('2d');rc.clearRect(0,0,surface.width,surface.height);rc.save();rc.scale(actorRig.textureScale,actorRig.textureScale);rc.translate(size/2,size/2);rc.imageSmoothingEnabled=false;
+  const density=materialDensity(c)||actorRig.textureScale,key=size+':'+density;let surface=riderSurfaces.get(key);
+  if(!surface){surface=document.createElement('canvas');surface.width=surface.height=size*density;riderSurfaces.set(key,surface);}
+  const rc=surface.getContext('2d');setWorldMaterial(rc,!!materialDensity(c));rc.clearRect(0,0,surface.width,surface.height);rc.save();rc.scale(density,density);rc.translate(size/2,size/2);rc.imageSmoothingEnabled=false;
   paintTwoWheel(rc,user,items,vehicle,source,rule,direction,options);rc.restore();c.drawImage(surface,-size/2,-size/2,size,size);c.restore();return;
  }
  c.save();c.rotate(angle);const fittedVehicle=drawFrame(c,source,-rule.w/2,-rule.h/2,rule.w,rule.h,0.5);c.restore();
@@ -174,9 +178,9 @@ export function drawRider(c,user,items,vehicle,x,y,options={}){
   const windowHeight=(Math.max(...points.map(p=>p[1]))-Math.min(...points.map(p=>p[1])));
   const portraitHeight=mount.portrait.bottom-mount.portrait.top;
   const scale=Math.min(rule.scale,windowHeight/portraitHeight);
-  const body=bodyFrame(characterVariant(user),direction,equipmentFor(user,items));
+  const density=materialDensity(c)||actorRig.textureScale,body=bodyFrame(characterVariant(user),direction,equipmentFor(user,items),density);
   c.save();c.rotate(angle);path();c.clip();c.rotate(-angle);
-  if(body)c.drawImage(body,0,(actorRig.canvas.y+mount.portrait.top)*actorRig.textureScale,actorRig.canvas.w*actorRig.textureScale,portraitHeight*actorRig.textureScale,center[0]-actorRig.canvas.x*scale,center[1]-portraitHeight*scale/2,actorRig.canvas.w*scale,portraitHeight*scale);
+  if(body)c.drawImage(body,0,(actorRig.canvas.y+mount.portrait.top)*density,actorRig.canvas.w*density,portraitHeight*density,center[0]-actorRig.canvas.x*scale,center[1]-portraitHeight*scale/2,actorRig.canvas.w*scale,portraitHeight*scale);
   c.rotate(angle);path();c.fillStyle='rgba(83,129,166,.16)';c.fill();c.strokeStyle='#435667';c.lineWidth=.7;c.stroke();c.restore();
  }
  c.restore();

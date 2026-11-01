@@ -1,0 +1,20 @@
+import {readFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+import {PNG} from 'pngjs';
+import {worldMaterialDensity} from '../src/render-quality.js';
+import {actorRig,directions,atlasRules} from '../src/asset-rules.js';
+import {pixelPalette} from '../src/pixel-palette.js';
+import {officeSeats,staffOrder,staticSeats} from '../src/office-seats.js';
+import {findPath,clearSegment} from '../src/pathfinding.js';
+import {catalog} from '../shared/catalog.js';
+const contract=JSON.parse(readFileSync('config/world-art-contract.json')),provenance=JSON.parse(readFileSync(contract.canonicalPalette));
+assert.deepEqual(directions,contract.directions);assert.equal(worldMaterialDensity,contract.worldTexelsPerUnit);assert.equal(actorRig.textureScale,contract.previewTexelsPerUnit);
+assert.deepEqual(pixelPalette,provenance.environment.palette.map(s=>s.slice(1).match(/../g).map(x=>parseInt(x,16))));assert(pixelPalette.length<=256);
+assert(actorRig.canvas.y+actorRig.head.top>=contract.compiledGutterTexels/actorRig.textureScale,'Head must have a real gutter');
+assert.equal(atlasRules['chairs-cardinal'].columns,4);assert.equal(staticSeats.length,contract.seating.static);
+const slots=['desk','chair','monitor','case'],users=staffOrder.map(id=>({id,name:id,equipment:Object.fromEntries(slots.map(slot=>[slot,catalog.find(i=>i.category===slot&&i.variant===0&&i.active).id]))}));
+const seats=officeSeats(users,catalog);assert.equal(seats.length,contract.seating.static+contract.seating.workstations);assert.equal(new Set(seats.map(s=>s.id)).size,seats.length);
+for(const seat of seats){const path=findPath({x:860,y:455},seat.approach);assert(path,'No valid approach for '+seat.id);let previous={x:860,y:455};for(const point of path){assert(clearSegment(previous,point));previous=point;}}
+const png=PNG.sync.read(readFileSync('public/art/chairs-cardinal.png'));
+for(let row=0;row<5;row++)for(let view=0;view<4;view++)for(let y=0;y<160;y++)for(let x=0;x<128;x++)if(x<4||y<4||x>=124||y>=156)assert.equal(png.data[((row*160+y)*png.width+view*128+x)*4+3],0,'Every chair view requires transparent gutters');
+console.log('PASS common material density/palette/gutters, four-view chairs and all 28 collision-safe seat approaches');

@@ -4,12 +4,14 @@ export const workstationSlots=['desk','chair','case','monitor','cooling','access
 export const stationBounds={width:96,height:112};
 const clamp=(n,a,b)=>Math.max(a,Math.min(Math.max(a,b),n));
 const percent=(n,a,b)=>b===a?50:Math.round(clamp((n-a)/(b-a),0,1)*100);
+const deskSizes=[[352,169],[363,170],[334,171],[369,171],[337,176]],chairSizes=[[76,104],[77,106],[77,105],[76,108],[76,105]];
 
 export function workstationLayout(user,items,sourceFor=()=>null){
  const equipped=Object.fromEntries(workstationSlots.map(slot=>[slot,items.find(i=>i.id===user?.equipment?.[slot])]));
  function fit(slot,box){
   const item=equipped[slot],source=item&&sourceFor(item,slot);
-  const dimensions=source||{sw:slot==='desk'?205:box.w,sh:slot==='desk'?100:box.h};
+  const native=(slot==='desk'?deskSizes:slot==='chair'?chairSizes:null)?.[(item?.variant||0)%5];
+  const dimensions=source||(native?{sw:native[0],sh:native[1]}:{sw:box.w,sh:box.h});
   return containRect(dimensions.sw,dimensions.sh,0,0,box.w,box.h,0);
  }
  function part(slot,box,rails,defaultX,defaultY,extra={}){
@@ -50,7 +52,9 @@ export function workstationLayout(user,items,sourceFor=()=>null){
  }
  if(equipped.chair){
   const size=fit('chair',stationRules.chair);
-  parts.push(part('chair',stationRules.chair,{minX:0,maxX:96-size.w,minY:58,maxY:112-size.h},48-size.w/2,65,{view:'back'}));
+  // Seat follows the working edge, not an unrelated scene-space Y constant.
+  const center=d.x+d.w/2-size.w/2,near=d.y+d.h-22;
+  parts.push(part('chair',stationRules.chair,{minX:center-5,maxX:center+5,minY:near-2,maxY:near+3},center,near,{view:'back'}));
  }
  return parts.filter(Boolean).sort((a,b)=>a.layer-b.layer||a.y+a.h-b.y-b.h);
 }

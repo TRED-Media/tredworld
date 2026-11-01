@@ -1,9 +1,20 @@
+import {standardPixels} from './material-standard.js';
+import {materialDensity} from './render-quality.js';
 // One uniform scale, with an explicit alignment. Never stretch a sprite.
 export function containRect(sw,sh,x,y,w,h,alignY=.5){
  if(![sw,sh,x,y,w,h,alignY].every(Number.isFinite)||sw<=0||sh<=0||w<=0||h<=0)throw new RangeError('Sprite dimensions must be finite and positive');
  const scale=Math.min(w/sw,h/sh);return {x:x+(w-sw*scale)/2,y:y+(h-sh*scale)*Math.max(0,Math.min(1,alignY)),w:sw*scale,h:sh*scale};
 }
 const frames=new WeakMap();
+const worldSamples=new WeakMap();
+function worldSample(frame,w,h,density){
+ let cache=worldSamples.get(frame);if(!cache){cache=new Map();worldSamples.set(frame,cache);}
+ const scale=w*density/frame.sw,sw=frame.sw*scale,sh=frame.sh*scale,key=[density,w.toFixed(4),h.toFixed(4)].join(':');
+ if(cache.has(key))return cache.get(key);
+ const image=document.createElement('canvas');image.width=Math.ceil(sw)+2;image.height=Math.ceil(sh)+2;const c=image.getContext('2d');c.imageSmoothingEnabled=false;c.drawImage(frame.image,frame.sx,frame.sy,frame.sw,frame.sh,1,1,sw,sh);
+ const pixels=c.getImageData(0,0,image.width,image.height);standardPixels(pixels.data,false);c.putImageData(pixels,0,0);
+ const result={image,sx:1,sy:1,sw,sh};cache.set(key,result);while(cache.size>4)cache.delete(cache.keys().next().value);return result;
+}
 export function spriteFrame(image,sx,sy,sw,sh,isolate=false){
  let cache=frames.get(image);if(!cache){cache=new Map();frames.set(image,cache);}
  // Integer boundaries avoid resampling neighbouring cells in generated atlases.
@@ -12,6 +23,8 @@ export function spriteFrame(image,sx,sy,sw,sh,isolate=false){
  const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;
  const ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.drawImage(image,left,top,width,height,0,0,width,height);
  const pixels=ctx.getImageData(0,0,width,height),data=pixels.data;
+ let legacyAlpha=false;for(let n=3;n<data.length;n+=4)if(data[n]>0&&data[n]<255){legacyAlpha=true;break;}
+ standardPixels(data,legacyAlpha);ctx.putImageData(pixels,0,0);
  if(isolate){
   const seen=new Uint8Array(width*height);let largest=[];
   for(let n=0;n<seen.length;n++){
@@ -41,7 +54,8 @@ export function drawFrame(ctx,frame,x,y,w,h,alignY=.5){
  if(!frame||frame.empty)return null;
  const d=containRect(frame.sw,frame.sh,x,y,w,h,alignY);
  d.x=Math.round(d.x);d.y=Math.round(d.y);
- ctx.imageSmoothingEnabled=false;ctx.drawImage(frame.image,frame.sx,frame.sy,frame.sw,frame.sh,d.x,d.y,d.w,d.h);
+ const density=materialDensity(ctx),source=density?worldSample(frame,d.w,d.h,density):frame;
+ ctx.imageSmoothingEnabled=false;ctx.drawImage(source.image,source.sx,source.sy,source.sw,source.sh,d.x,d.y,d.w,d.h);
  if(globalThis.__spriteAudit&&globalThis.__spriteAudit.length<10000)globalThis.__spriteAudit.push({source:[frame.sw,frame.sh],destination:[d.w,d.h]});
  return d;
 }

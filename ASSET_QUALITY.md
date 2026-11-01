@@ -26,6 +26,10 @@ Profile `legacy-reference` chỉ áp dụng cho đúng hash nguồn đã lưu. T
 
 ## Kiểm tra và chuẩn hóa
 
+Đợt world standardization bổ sung hai master strict: `office-standard.png` (256 màu) và `chairs-cardinal.png` (156 màu trong palette khóa 256 màu, 5 mẫu × 4 hướng). Manifest hiện có **19 master**: 16 nguồn legacy được bảo toàn byte-for-byte và ba export strict. Nguồn sinh, native regions, scale/anchor và provenance nằm trong `art-source/world-standardization.json`; các candidate bị loại vẫn nằm trong `work/world-standardization/v1/`. `chairs-rear.png` được giữ làm tham chiếu, không còn là fallback render. Quy chuẩn runtime và gate mở rộng nằm trong `config/world-art-contract.json` và `scripts/check-world-contract.mjs`.
+
+Normalization runtime không biến nguồn legacy thành nguồn strict: file gốc vẫn có nợ alpha/palette đã ghi nhận. Ảnh tĩnh không tự có bốn hướng; pet giữ pose gốc, trong khi character, trang phục, rider/vehicle và ghế được kiểm tra bốn hướng. Chỉ ghi nhận kết quả đã có bằng chứng, không suy diễn từ build thành công.
+
 ```sh
 npm run assets:check        # integrity, native rectangles, 4 hướng, rig và tư thế
 npm run assets:audit        # đọc ảnh; báo rõ legacy-issues, không sửa master

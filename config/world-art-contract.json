@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "directions": ["front", "back", "left", "right"],
+  "models": 2,
+  "worldTexelsPerUnit": 2,
+  "previewTexelsPerUnit": 4,
+  "alpha": "binary",
+  "compiledGutterTexels": 4,
+  "maxSamplesPerFrame": 4,
+  "canonicalPalette": "art-source/world-standardization.json",
+  "seating": {"static": 19, "workstations": 9, "navigationStep": 8, "leaseMilliseconds": 45000},
+  "policy": "Preserve source masters. Normalize legacy sources once; respect declared binary-alpha custom palettes. Never trim/recenter animation poses independently, clip hair to fit a hat, or use background pixels as interaction state."
+}

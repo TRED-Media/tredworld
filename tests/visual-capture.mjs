@@ -31,7 +31,7 @@ try{
   await context.addInitScript(()=>localStorage.setItem('tred-aura','off'));
   await page.clock.install({time:new Date('2026-11-01T05:00:00Z')});
   await page.goto(vite.resolvedUrls.local[0]);await page.locator('#login select').selectOption('admin');await page.locator('#login [name=password]').fill('admin');await page.locator('#login button').click();await page.locator('#modal').waitFor({state:'hidden'});logged=true;
-  await page.evaluate(async()=>{const {loadArt}=await import('/src/art-assets.js');await Promise.all(['characters-cardinal','wear-hat','wear-shirt','wear-shoes','wear-glasses','vehicle-atlas','pet-atlas','items-atlas','office-atlas','furniture-straight','chairs-rear'].map(n=>loadArt(n).decode()));});
+  await page.evaluate(async()=>{const {loadArt}=await import('/src/art-assets.js');await Promise.all(['characters-cardinal','wear-hat','wear-shirt','wear-shoes','wear-glasses','vehicle-atlas','pet-atlas','items-atlas','office-atlas','furniture-straight','chairs-rear','chairs-cardinal','office-standard'].map(n=>loadArt(n).decode()));});
   await page.clock.pauseAt(new Date('2026-11-01T05:01:00Z'));
   const click=selector=>page.evaluate(selector=>{const el=document.querySelector(selector);if(!el)throw Error('Missing capture control '+selector);el.click();},selector);
   const capture=async screen=>{await page.clock.runFor(160);await page.evaluate(()=>Promise.all([...document.images].filter(i=>i.isConnected).map(i=>i.decode())));const file=name+'-'+screen+'.png';await page.screenshot({path:resolve(output,file),animations:'disabled'});record(file);};
